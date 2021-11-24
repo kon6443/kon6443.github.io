@@ -17,8 +17,8 @@ app.get('/blur', function(req, res) {
     res.sendFile(__dirname + '/blur.html');
 });
 
-app.get('/search', function(req, res) {
-    /*
+app.get('/result', function(req, res) {
+    
     var options = {
         mode: 'json',
         pythonPath:'',  
@@ -29,24 +29,29 @@ app.get('/search', function(req, res) {
     PythonShell.PythonShell.run('test.py', options, function(err, results, next) {
         if(err) throw err;
         console.log('return: ', results);
-        return results;
+        //res.status(200).send(results);
     });
-    */
-    res.sendFile(__dirname + '/search.html');
+    
+    res.sendFile(__dirname + '/result.html');
 });
 
-app.get('/search/:country', function(req, res) {
+
+//http://localhost:8080/result/country/au
+app.get('/result/country/:country?', function(req, res) {
+    //req.query.country
+    //req.params.country
+    let return_value = '';
     var options = {
         mode: 'json',
         pythonPath:'',  
         pythonOptions:['-u'],
         scriptPath:'',
-        args: [req.query.country]
+        args: [req.params.country]
     };
-    PythonShell.PythonShell.run('test.py', options, function(err, results, next) {
+    console.log(req.params.country);
+    PythonShell.PythonShell.run('test.py', options, function(err, results) {
         if(err) throw err;
-        console.log('return: ', results);
-        return results;
+        //console.log('return: ', results);
+        res.status(200).send(results[0]);
     });
-    res.sendFile(__dirname + '/search.html');
 });
