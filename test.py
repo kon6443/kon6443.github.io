@@ -1,5 +1,6 @@
 import sqlite3
 import sys
+import json
 
 def main(arg):
     #sql processing
@@ -9,16 +10,16 @@ def main(arg):
     data = cursor.fetchall()
 
     words = []
-    return_value = []
+    results = {}
+    results["country"] = []
     #comparing with the db file
     for row in data:
         for word in row:
             words.append(word.strip().lower())
             if arg == word[:len(arg)].strip().lower():
-                return_value.append(word)
+                results["country"].append(word)
+    return_value = json.dumps(results)
     print(return_value)
-    return return_value
 
 if __name__ == '__main__':
     main(sys.argv[1])
-

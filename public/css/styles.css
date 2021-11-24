@@ -1,7 +1,7 @@
-<style>
-
 #myFakeElement { color:red ; }
-
+head {
+	color: rgb(221,221,221);
+}
 body {
 	background-color: #1c1c1e;
 	font-family: sans-serif;
@@ -16,24 +16,28 @@ body {
 
 /* add a black background color to the top navigation */
 .navbar {
+	border: 2px solid white;
 	background-color: #1c1c1e;
-	overflow: hidden;
 	float: left;
 	width: 100%;
-	margin: auto;
 	display: block;
-	
 	/*
-	border: 2px solid white;
+	overflow: hidden;
 	*/
 }
 
+.navbar-nav {
+	border: 2px solid white;
+}
+
 .nav-item {
+	color: rgb(221,221,221);
 	overflow: hidden;
+	border: 2px solid white;
 	float: left;
 	text-align: center;
-	width: 23%;
-	margin: 2px;
+	width: 20%;
+	margin: auto;
 	margin-bottom: 5%;
 }
 
@@ -83,7 +87,3 @@ body {
 	padding: 0;
 	box-sizing: border-box;
 }
-
-
-
-</style>

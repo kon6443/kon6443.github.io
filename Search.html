@@ -20,12 +20,13 @@
                     dataType:'json',
                     async: false,
 				    success: function(data) {
-                        console.log(response.country);
+                        console.log('success')
                         answer.innerHTML = data.country;
-                        console.log('data:', data);
-                        console.log('data.country:', data.country);
-                        //console.log('success data: ', JSON.stringify(data));
-                        //console.log('success data country: ', JSON.stringify(data.country));
+                        var json = $.parseJSON(data);
+                        console.log('data:', json);
+                        console.log('data.country:', json.country);
+                        console.log('success data: ', JSON.stringify(data));
+                        console.log('success data country: ', JSON.stringify(data.country));
 		            }
 			    });
 		    }
