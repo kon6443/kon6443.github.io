@@ -10,15 +10,20 @@ app.listen(port, function() {
 app.use(express.static(__dirname + ''));
 
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/home.html');
+    res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/blur', function(req, res) {
-    res.sendFile(__dirname + '/blur.html');
+app.get('/image', function(req, res) {
+    res.sendFile(__dirname + '/image.html');
 });
 
 app.get('/result', function(req, res) {
-    
+    res.sendFile(__dirname + '/result.html');
+});
+
+app.get('/result/country/:country', function(req, res) {
+    //req.query.country
+    //req.params.country
     var options = {
         mode: 'json',
         pythonPath:'',  
@@ -26,32 +31,25 @@ app.get('/result', function(req, res) {
         scriptPath:'',
         args: [req.query.country]
     };
-    PythonShell.PythonShell.run('test.py', options, function(err, results, next) {
+    PythonShell.PythonShell.run('prePopulate.py', options, function(err, results) {
         if(err) throw err;
-        console.log('return: ', results);
-        //res.status(200).send(results);
+        res.status(200).send(results[0]);
     });
-    
-    res.sendFile(__dirname + '/result.html');
 });
 
-
-//http://localhost:8080/result/country/au
-app.get('/result/country/:country?', function(req, res) {
-    //req.query.country
-    //req.params.country
-    let return_value = '';
+app.post('/image/:filename&:blurfactor', function(req, res) {
     var options = {
-        mode: 'json',
+        mode: 'text',
         pythonPath:'',  
-        pythonOptions:['-u'],
+        pythonOptions:['-u'],  
         scriptPath:'',
-        args: [req.params.country]
+        //args: ['cat', '1']
+        args: [req.params.filename, req.params.blurfactor]
     };
-    console.log(req.params.country);
-    PythonShell.PythonShell.run('test.py', options, function(err, results) {
+    console.log('params.filename: ', req.params.filename);
+    console.log('params.blurfactor: ', req.params.blurfactor);
+    PythonShell.PythonShell.run('blur.py', options, function(err, results) {
         if(err) throw err;
-        //console.log('return: ', results);
         res.status(200).send(results[0]);
     });
 });
