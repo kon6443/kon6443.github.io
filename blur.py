@@ -18,9 +18,9 @@ def average(img, x, y, blurfactor):
     (rAverage,gAverage,bAverage) = (rtotal//((blurfactor*2+1)**2)), (gtotal//((blurfactor*2+1)**2)), (btotal//((blurfactor*2+1)**2))
     return (rAverage, gAverage, bAverage)
 
-def blur(fileName, blurfactor):
+def blur(blurfactor):
     # Default file name is 'first.jpg'.
-    img = imread(fileName+'.jpg')
+    img = imread('cat.jpg')
     width = img.shape[1]
     height = img.shape[0]
 
@@ -40,15 +40,12 @@ def blur(fileName, blurfactor):
             progress = (y)/(height-blurfactor)
             update_progress(progress)
     update_progress(1)
-    img2.save(fileName+blurfactor)
+    img2.save('blur.jpg')
     img2.show()
 
 def main():
-    blur()
+    blur(int(sys.argv[1]))
 
 if __name__ == '__main__':
-    print(sys.argv[0])
-    print(sys.argv[1])
-    print(sys.argv[2])
-    #main(str(),int())
+    main()
 

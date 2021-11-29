@@ -1,4 +1,4 @@
-#myFakeElement { color:red ; }
+
 head {
 	color: rgb(221,221,221);
 }
@@ -17,17 +17,13 @@ body {
 /* add a black background color to the top navigation */
 .navbar {
 	border: 2px solid white;
-	background-color: #1c1c1e;
 	float: left;
 	width: 100%;
 	display: block;
 	/*
+	background-color: #1c1c1e;
 	overflow: hidden;
 	*/
-}
-
-.navbar-nav {
-	border: 2px solid white;
 }
 
 .nav-item {
@@ -87,3 +83,4 @@ body {
 	padding: 0;
 	box-sizing: border-box;
 }
+

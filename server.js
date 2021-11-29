@@ -21,6 +21,10 @@ app.get('/result', function(req, res) {
     res.sendFile(__dirname + '/result.html');
 });
 
+app.get('/data', function(req, res) {
+    res.sendFile(__dirname + '/data.html');
+});
+
 app.get('/result/country/:country', function(req, res) {
     //req.query.country
     //req.params.country
