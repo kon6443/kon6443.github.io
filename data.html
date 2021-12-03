@@ -24,18 +24,16 @@
 			<ul class="item-list mySelf">
 				<ul class="about">
 					<article class="about-text">
-
-                        
-						
-
+						<input name="data" type="text" id="data" placeholder="Enter id(int): " onsubmit='sendAjax()' /> 
+						<button>Submit</button>
                         <script>
                             function sendAjax() {
 								console.log('sending ajax');
-								var blurfactor = document.getElementById('blurfactor').value;
+								var data = document.getElementById('data').value;
                                 $.ajax({
                                     type: "post",
-                                    url: 'http://localhost:8080/image/:blurfactor',
-                                    data: {blurfactor:blurfactor},
+                                    url: 'http://localhost:8080/data/:data',
+                                    data: {data:data},
                                     dataType:'text',
                                     success: function(res) {
 										console.log('success');
