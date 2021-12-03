@@ -41,19 +41,8 @@ app.get('/result/country/:country', function(req, res) {
     });
 });
 
-app.post('/image/:filename&:blurfactor', function(req, res) {
-    var options = {
-        mode: 'text',
-        pythonPath:'',  
-        pythonOptions:['-u'],  
-        scriptPath:'',
-        //args: ['cat', '1']
-        args: [req.params.filename, req.params.blurfactor]
-    };
-    console.log('params.filename: ', req.params.filename);
-    console.log('params.blurfactor: ', req.params.blurfactor);
-    PythonShell.PythonShell.run('blur.py', options, function(err, results) {
-        if(err) throw err;
-        res.status(200).send(results[0]);
-    });
+app.post('/data/:data', function(req, res) {
+    var data = req.body.data;
+    console.log('req.body.data: ', data);
+    res.status(200).send('🛠: ', data);
 });
