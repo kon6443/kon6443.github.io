@@ -24,12 +24,16 @@
 			<ul class="item-list mySelf">
 				<ul class="about">
 					<article class="about-text">
-						<input name="data" type="text" id="data" placeholder="Enter id(int): " onsubmit='sendAjax()' /> 
-						<button>Submit</button>
+						<input name="data" type="text" id="data" placeholder="Enter id(int): " onsubmit="sendAjax()" /> 
+						<button>Submit</button><br>
+						<a>answer: </a> <span id="answer"></span>
                         <script>
+							var data = document.getElementById('data');
+							console.log(data);
                             function sendAjax() {
 								console.log('sending ajax');
 								var data = document.getElementById('data').value;
+								console.log(data)
                                 $.ajax({
                                     type: "post",
                                     url: 'http://localhost:8080/data/:data',
@@ -37,10 +41,11 @@
                                     dataType:'text',
                                     success: function(res) {
 										console.log('success');
-                                        progress.innerHTML = res.progress;
+                                        answer.innerHTML = res.data;
                                     }
                                 });
                             }
+							data.addEventListener("submit",sendAjax);
                         </script>
 					</article>
 				</ul>
