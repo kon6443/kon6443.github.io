@@ -8,6 +8,7 @@ app.listen(port, function() {
 });
 
 app.use(express.static(__dirname + ''));
+app.use(express.json())
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
@@ -42,7 +43,8 @@ app.get('/result/country/:country', function(req, res) {
 });
 
 app.post('/data/:data', function(req, res) {
-    var data = req.body.data;
+    var data = req.json;
     console.log('req.body.data: ', data);
-    res.status(200).send('🛠: ', data);
+    var return_value = '🛠'+data
+    res.status(200).send(return_value);
 });
