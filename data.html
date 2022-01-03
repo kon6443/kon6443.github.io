@@ -24,9 +24,11 @@
 			<ul class="item-list mySelf">
 				<ul class="about">
 					<article class="about-text">
-						<input name="data" type="text" id="data" placeholder="Enter id(int): " onsubmit="sendAjax()" /> 
+						<h1>Posting example</h1>  <br>
+						<input name="name" type="text" id="name" placeholder="Enter a name: " onsubmit="sendAjax()" /> <br><br>
+						<input name="SSN" type="text" id="SSN" placeholder="Enter a SSN: " onsubmit="sendAjax()" /> <br> <br>
 						<button>Submit</button><br>
-						<a>answer: </a> <span id="answer"></span>
+
                         <script>
 							var data = document.getElementById('data');
 							console.log(data);
@@ -47,6 +49,7 @@
                             }
 							data.addEventListener("submit",sendAjax);
                         </script>
+
 					</article>
 				</ul>
 			</ul>			
