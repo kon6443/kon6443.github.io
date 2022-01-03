@@ -22,10 +22,6 @@ app.get('/result', function(req, res) {
     res.sendFile(__dirname + '/result.html');
 });
 
-app.get('/data', function(req, res) {
-    res.sendFile(__dirname + '/data.html');
-});
-
 app.get('/result/country/:country', function(req, res) {
     //req.query.country
     //req.params.country
@@ -42,9 +38,26 @@ app.get('/result/country/:country', function(req, res) {
     });
 });
 
-app.post('/data/:data', function(req, res) {
-    var data = req.json;
-    console.log('req.body.data: ', data);
-    var return_value = '🛠'+data
+app.get('/data', function(req, res) {
+    res.sendFile(__dirname + '/data.html');
+});
+
+app.post('/data/name/:name&/ssn/:ssn', function(req, res) {
+    //req.query.country
+    //req.params.country
+    console.log(req.query.name)
+    console.log(req.query.ssn)
+    var options = {
+        mode: 'json',
+        pythonPath:'',  
+        pythonOptions:['-u'],
+        scriptPath:'',
+        args: [req.query.country]
+    };
+    PythonShell.PythonShell.run('prePopulate.py', options, function(err, results) {
+        if(err) throw err;
+        res.status(200).send(results[0]);
+    });    
+
     res.status(200).send(return_value);
 });
