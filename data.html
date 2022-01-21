@@ -24,21 +24,42 @@
 			<ul class="item-list mySelf">
 				<ul class="about">
 					<article class="about-text">
-						<h1>Posting example</h1>  <br>
-						<input name="name" type="text" id="name" placeholder="Enter a name: " onsubmit="sendAjax()" /> <br><br>
-						<input name="SSN" type="text" id="SSN" placeholder="Enter a SSN: " onsubmit="sendAjax()" /> <br> <br>
-						<button>Submit</button><br>
+						<!-- <form action="http://localhost:8080/data/name/:name&&/ssn/:ssn" accept-charset="utf-8" name="aa" method="post"> -->
+						<form action="http://localhost:8080/data/:name/:ssn" accept-charset="utf-8" id="info" name="info" method="get"></form>
+							<fieldset>
+								<legend>Personal info post example</legend>
+									Name: <input type="text" id="name" placeholder="Enter a name: " name="name"/><br><br>
+									SSN: <input type="text" id="ssn" placeholder="Enter a SSN: " name="ssn"/><br><br>
+								<input type="submit" value="Submit"/>
+								<input type="reset" value="Reset"/><br><br>
+							</fieldset>
+						</form>
+
+						<table>
+							<tr>
+								{% for header in headings %}
+									<th>{{ header }}</th>
+								{% endfor %}
+							</tr>
+								{% for row in data %}
+							<tr>
+								{% for cell in row %}
+								<td>{{ cell }}</td>
+								{% endfor %}
+							</tr>
+							{% endfor %}
+						</table>
 
                         <script>
-							var data = document.getElementById('data');
-							console.log(data);
+							var name = document.getElementById('name').value;
+							var ssn = document.getElementById('ssn').value;
+							console.log(name);
+							console.log(ssn);
                             function sendAjax() {
 								console.log('sending ajax');
-								var data = document.getElementById('data').value;
-								console.log(data)
                                 $.ajax({
                                     type: "post",
-                                    url: 'http://localhost:8080/data/:data',
+                                    url: 'http://localhost:8080/data/:name/:ssn',
                                     data: {data:data},
                                     dataType:'text',
                                     success: function(res) {
@@ -47,7 +68,7 @@
                                     }
                                 });
                             }
-							data.addEventListener("submit",sendAjax);
+							//document.getElementById('info').addEventListener("submit",sendAjax);
                         </script>
 
 					</article>

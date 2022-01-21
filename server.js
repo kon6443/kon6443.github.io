@@ -39,25 +39,30 @@ app.get('/result/country/:country', function(req, res) {
 });
 
 app.get('/data', function(req, res) {
+    console.log('/data');
     res.sendFile(__dirname + '/data.html');
 });
 
-app.post('/data/name/:name&/ssn/:ssn', function(req, res) {
+app.get('/data/:name/:ssn', function(req, res) {
     //req.query.country
     //req.params.country
-    console.log(req.query.name)
-    console.log(req.query.ssn)
+    console.log('req.params: ',req.params);
+    console.log('req.params.name: ',req.params.name);
+    console.log('req.params.ssn: ',req.params.ssn);
     var options = {
         mode: 'json',
         pythonPath:'',  
         pythonOptions:['-u'],
         scriptPath:'',
-        args: [req.query.country]
+        args: [req.params.name, req.params.ssn] 
     };
-    PythonShell.PythonShell.run('prePopulate.py', options, function(err, results) {
+    PythonShell.PythonShell.run('dbPrac.py', options, function(err, res) {
         if(err) throw err;
-        res.status(200).send(results[0]);
-    });    
-
-    res.status(200).send(return_value);
+        console.log('res[0]', res[0]);
+        console.log('res[0][0]', res[0][0]);
+        console.log('res[0][1]', res[0][1]);
+        //res.render({data:res[0]});
+        res.status(200).send(res[0]);
+    });
+    //res.status(200).send(return_value);
 });
