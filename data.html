@@ -1,83 +1,93 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" type="text/css" href="/public/css/styles.css">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="/public/css/styles.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-		<title>Onam Kwon</title>
-		<body class="body" style="background-color: #1c1c1e; color: rgb(221,221,221); font-family: Sans-serif; margin:0 auto;"></body>
-		<!-- Bootstrap CSS
-		<body class="body" style="background-color: #1c1c1e; color: rgb(221,221,221); font-family: Sans-serif; margin:0 auto;">
-		 -->
-	</head>
-	
-	<body>
-		<div class="navbar">
-			<a class="active" href="/">Onam Kwon</a> 
-			<a href="/dev">Dev</a> 
-			<a href="/private">Private</a> 
-			<a href="/about">About</a>
-		</div>  
-		<div class="wrapper">
-			<ul class="item-list mySelf">
-				<ul class="about">
-					<article class="about-text">
-						<!-- <form action="http://localhost:8080/data/name/:name&&/ssn/:ssn" accept-charset="utf-8" name="aa" method="post"> -->
-						<form action="http://localhost:8080/data/:name/:ssn" accept-charset="utf-8" id="info" name="info" method="get"></form>
-							<fieldset>
-								<legend>Personal info post example</legend>
-									Name: <input type="text" id="name" placeholder="Enter a name: " name="name"/><br><br>
-									SSN: <input type="text" id="ssn" placeholder="Enter a SSN: " name="ssn"/><br><br>
-								<input type="submit" value="Submit"/>
-								<input type="reset" value="Reset"/><br><br>
-							</fieldset>
-						</form>
-
-						<table>
-							<tr>
-								{% for header in headings %}
-									<th>{{ header }}</th>
-								{% endfor %}
-							</tr>
-								{% for row in data %}
-							<tr>
-								{% for cell in row %}
-								<td>{{ cell }}</td>
-								{% endfor %}
-							</tr>
-							{% endfor %}
-						</table>
+        <title>Onam Kwon</title>
+        <body class="body" style="background-color: #1c1c1e; color: rgb(221,221,221); font-family: Sans-serif; margin:0 auto;"></body>
+        <!-- Bootstrap CSS
+        <body class="body" style="background-color: #1c1c1e; color: rgb(221,221,221); font-family: Sans-serif; margin:0 auto;">
+         -->
+    </head>
+    
+    <body>
+        <div class="navbar">
+            <a class="active" href="/">Onam Kwon</a> 
+            <a href="/dev">Dev</a> 
+            <a href="/private">Private</a> 
+            <a href="/about">About</a>
+        </div>  
+        <div class="wrapper">
+            <ul class="item-list mySelf">
+                <ul class="about">
+                    <article class="about-text">
+                        <form action="http://localhost:8080/data/name/:name/ssn/:ssn" method="get" id="signup">
+                            <h1>Personal info post example</h1>
+                            <div class="field">
+                                <label for="name">Name:</label>
+                                <input type="text" id="name" placeholder="Enter your fullname" />
+                                <small></small>
+                            </div>
+                            <div class="field">
+                                <label for="ssn">SSN:</label>
+                                <input type="text" id="ssn" placeholder="Enter your SSN" />
+                                <small></small>
+                            </div>
+                            <button type="submit">Submit</button><br><br>
+                        </form>
+							h1 My name is #{name}
+                        <table>
+                            <tr>
+                                {% for header in headings %}
+                                    <th>{{ header }}</th>
+                                {% endfor %}
+                            </tr>
+                                {% for row in data %}
+                            <tr>
+                                {% for cell in row %}
+                                <td>{{ cell }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </table>
 
                         <script>
-							var name = document.getElementById('name').value;
-							var ssn = document.getElementById('ssn').value;
-							console.log(name);
-							console.log(ssn);
+                            var name = document.getElementById('name');
+                            var ssn = document.getElementById('ssn');
+                            console.log(name);
+                            console.log(ssn);
                             function sendAjax() {
-								console.log('sending ajax');
+                                console.log('sending ajax');
                                 $.ajax({
-                                    type: "post",
-                                    url: 'http://localhost:8080/data/:name/:ssn',
-                                    data: {data:data},
+                                    type: "get",
+                                    url: 'http://localhost:8080/data/name/:name/ssn/:ssn',
+                                    data: {name:name,ssn:ssn},
                                     dataType:'text',
                                     success: function(res) {
-										console.log('success');
+                                        console.log('success');
                                         answer.innerHTML = res.data;
                                     }
                                 });
                             }
-							//document.getElementById('info').addEventListener("submit",sendAjax);
+                            const form = document.getElementById('info');
+                            form.addEventListener('submit', (event) => {
+								console.log('Sending ajax...');
+								sendAjax();
+                            });
+                            //document.getElementById('info').addEventListener("submit",sendAjax);
                         </script>
 
-					</article>
-				</ul>
-			</ul>			
-		</div>
-		<!-- Option 1: Bootstrap Bundle with Popper -->
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
-	</body>
+                    </article>
+                </ul>
+            </ul>           
+        </div>
+        <!-- Option 1: Bootstrap Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    </body>
 </html>
+
 
 
