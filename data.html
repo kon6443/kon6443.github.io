@@ -24,16 +24,22 @@
             <ul class="item-list mySelf">
                 <ul class="about">
                     <article class="about-text">
-                        <form action="http://localhost:8080/data/name/:name/ssn/:ssn" method="get" id="signup">
+                        <form action="http://localhost:8080/data" method="post" id="signup">
+						<!-- <form action="http://localhost:8080/data/name/:name/ssn/:ssn" method="get" id="signup"> -->
                             <h1>Personal info post example</h1>
                             <div class="field">
                                 <label for="name">Name:</label>
-                                <input type="text" id="name" placeholder="Enter your fullname" />
+                                <input type="text" id="name" name="name" placeholder="Enter your fullname" /><br><br>
                                 <small></small>
                             </div>
                             <div class="field">
                                 <label for="ssn">SSN:</label>
-                                <input type="text" id="ssn" placeholder="Enter your SSN" />
+                                <input type="text" id="ssn" name="ssn" placeholder="Enter your SSN" /><br><br>
+                                <small></small>
+                            </div>
+							<div class="field">
+                                <label for="state">State:</label>
+                                <input type="text" id="state" name="state" placeholder="Enter your state" /><br><br>
                                 <small></small>
                             </div>
                             <button type="submit">Submit</button><br><br>
@@ -57,13 +63,11 @@
                         <script>
                             var name = document.getElementById('name');
                             var ssn = document.getElementById('ssn');
-                            console.log(name);
-                            console.log(ssn);
                             function sendAjax() {
-                                console.log('sending ajax');
+                                console.log('Sending ajax...');
                                 $.ajax({
-                                    type: "get",
-                                    url: 'http://localhost:8080/data/name/:name/ssn/:ssn',
+                                    type: "post",
+                                    url: 'http://localhost:8080/data',
                                     data: {name:name,ssn:ssn},
                                     dataType:'text',
                                     success: function(res) {
@@ -74,7 +78,7 @@
                             }
                             const form = document.getElementById('info');
                             form.addEventListener('submit', (event) => {
-								console.log('Sending ajax...');
+								console.log('Event listener...');
 								sendAjax();
                             });
                             //document.getElementById('info').addEventListener("submit",sendAjax);
