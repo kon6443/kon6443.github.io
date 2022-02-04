@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+
+//  To use python script
 var PythonShell = require('python-shell');
 
 const bodyParser = require('body-parser');
@@ -10,6 +12,8 @@ app.use(bodyParser.json());
 
 app.use(express.static(__dirname + ''));
 app.use(express.json());
+
+app.engine('html', require('ejs').renderFile);
 
 const port = 8080;
 app.listen(port, function() {
@@ -44,12 +48,66 @@ app.get('/result/country/:country', function(req, res) {
     });
 });
 
+/*
+app.get('/data', function(req, res) {
+    
+    var options = {
+        mode: 'json',
+        pythonPath:'',  
+        pythonOptions:['-u'],
+        scriptPath:'',
+        args: []
+    };
+    PythonShell.PythonShell.run('dbShow.py', options, function(err, res, next) {
+        if(err) throw err;
+        console.log('res[0]: ', res[0]);
+        var name = res[0];
+        res.status(200).json({name: JSON.parse(res[0])});
+        //next();
+    });
+    //res.sendFile(__dirname + '/data.html',{name:name});
+    //var name = 'whut up';
+    //res.render(__dirname + '/data.html',{name:name});
+    res.render(__dirname + '/data.html');
+});
+*/
+
 app.get('/data', function(req, res) {
     res.sendFile(__dirname + '/data.html');
 });
 
+
+/*
+app.get('/data', function(req, res) {
+    console.log('/data is on.');
+    const runPy = async (code) => {
+        var options = { 
+            mode: 'json',
+            pythonPath:'',  
+            pythonOptions:['-u'],
+            scriptPath:'',
+            args: []
+        };
+       // wrap it in a promise, and `await` the result
+       const result = await new Promise((resolve, reject) => {
+         PythonShell.run('dbShow.py', options, (err, res) => {
+           if (err) return reject(err);
+           console.log('dbShow executed.');
+           return resolve(res);
+         });
+       });
+       console.log(res.stdout);
+       return result;
+     };
+    //console.log('This is a result: ', result);
+    res.sendFile(__dirname + '/data.html');
+});
+*/
+
+
 app.post('/data', function(req, res) {
     const {name, ssn, state} = req.body;
+    console.log('name: ',name, 'ssn: ',ssn,'state: ',state);
     var options = {
         mode: 'json',
         pythonPath:'',  
@@ -57,13 +115,9 @@ app.post('/data', function(req, res) {
         scriptPath:'',
         args: [name,ssn,state]
     };
-    console.log("options['args'][0]: ", options['args'][0]);
-    console.log("options['args'][1]: ", options['args'][1]);
-    console.log("options['args'][2]: ", options['args'][2]);
-    PythonShell.PythonShell.run('dbPrac.py', options, function(err, res) {
+    PythonShell.PythonShell.run('dbPrac.py', options, function(err, results) {
         if(err) throw err;
-        console.log('res[0][0]: ', res[0][0]);
-        //console.log('res[0][0][3]: ', res[0][0][3]);
+        console.log(results[0][0]);
+        res.status(200).send(results[0]);
     });
-    res.json(req.body);
 });
