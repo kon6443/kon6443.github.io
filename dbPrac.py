@@ -25,7 +25,7 @@ def show():
         return_value = json.dumps(result)
         print(return_value)
 
-def insert(name, category, region):
+def insert(name, category, state):
     #   SQLite DB connection
     conn = sqlite3.connect("test.db")
     with conn:
@@ -38,7 +38,7 @@ def insert(name, category, region):
         )
         sql = "insert into customer(name,category,region) values (?,?,?)"
         #cursor.executemany(sql, data)    
-        cursor.execute(sql,(name,category,region))
+        cursor.execute(sql,(name,category,state))
         conn.commit()        
 
         '''
@@ -46,17 +46,14 @@ def insert(name, category, region):
         conn.close()
         '''
     
-def main2(arg):
+def main2(name,category,state):
     while(True):
         print('0: Insert')
         print('1: Show')
         print('2: Delete')
         user_input = int(input('Enter a number you want to: '))
         if(user_input==0):
-            name = input('Enter a name: ')
-            category = input('Enter a number: ')
-            region = input('Enter a region: ')
-            insert(name, category, region)
+            insert(name, category, state)
         elif(user_input==1):
             show()
         elif(user_input==2):
@@ -68,17 +65,15 @@ def delete(arg):
     delete(user_input)
     show()
 
-def add(arg):
-    print(arg)
-    name = input('Enter a name: ')
-    category = input('Enter a number: ')
-    region = input('Enter a region: ')
-    insert(name, category, region)
+def add(name,category,state):
+    insert(name, category, state)
     show()
 
 def main(arg):
-    #print(arg)
+    name, category, state = arg[:]
+    insert(name,category,state)
+    #return_value = json.dumps(arg)
     show()
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    main(sys.argv[1:])

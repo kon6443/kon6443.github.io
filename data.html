@@ -42,9 +42,12 @@
                                 <input type="text" id="state" name="state" placeholder="Enter your state" /><br><br>
                                 <small></small>
                             </div>
-                            <button type="submit">Submit</button><br><br>
+                            <button type="button" onclick="sendAjax()">Submit</button><br><br>
+                            <span id="head"></span> <br>
+                            <span id="answer"></span> <br><br>
                         </form>
 							h1 My name is #{name}
+                            h1 My res is #{res}
                         <table>
                             <tr>
                                 {% for header in headings %}
@@ -59,32 +62,32 @@
                             </tr>
                             {% endfor %}
                         </table>
-
+                        <h1><%= name %></h1>
                         <script>
-                            var name = document.getElementById('name');
-                            var ssn = document.getElementById('ssn');
                             function sendAjax() {
-                                console.log('Sending ajax...');
+                                const name = document.getElementById("name").value;
+                                const ssn = document.getElementById("ssn").value;
+                                const state = document.getElementById("state").value;
+                                document.getElementById("name").value = "";
+                                document.getElementById("ssn").value = "";
+                                document.getElementById("state").value = "";
                                 $.ajax({
                                     type: "post",
                                     url: 'http://localhost:8080/data',
-                                    data: {name:name,ssn:ssn},
-                                    dataType:'text',
+                                    data: {name:name,ssn:ssn,state:state},
+                                    dataType:'json',
                                     success: function(res) {
-                                        console.log('success');
-                                        answer.innerHTML = res.data;
+                                        head.innerHTML = "Name / Category / Region";
+                                        let temp = [];
+                                        for(let i = 0;i<res.length;i++) {
+                                            temp += res[i] + "<br>";
+                                        }
+                                        answer.innerHTML = temp;
                                     }
                                 });
                             }
-                            const form = document.getElementById('info');
-                            form.addEventListener('submit', (event) => {
-								console.log('Event listener...');
-								sendAjax();
-                            });
-                            //document.getElementById('info').addEventListener("submit",sendAjax);
                         </script>
-
-                    </article>
+                    </article> 
                 </ul>
             </ul>           
         </div>
