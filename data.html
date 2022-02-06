@@ -25,7 +25,6 @@
                 <ul class="about">
                     <article class="about-text">
                         <form action="http://localhost:8080/data" method="post" id="signup">
-						<!-- <form action="http://localhost:8080/data/name/:name/ssn/:ssn" method="get" id="signup"> -->
                             <h1>Personal info post example</h1>
                             <div class="field">
                                 <label for="name">Name:</label>
@@ -42,29 +41,13 @@
                                 <input type="text" id="state" name="state" placeholder="Enter your state" /><br><br>
                                 <small></small>
                             </div>
-                            <button type="button" onclick="sendAjax()">Submit</button><br><br>
+                            <button type="button" onclick="submitAjax()">Submit</button><br><br>
                             <span id="head"></span> <br>
                             <span id="answer"></span> <br><br>
                         </form>
-							h1 My name is #{name}
-                            h1 My res is #{res}
-                        <table>
-                            <tr>
-                                {% for header in headings %}
-                                    <th>{{ header }}</th>
-                                {% endfor %}
-                            </tr>
-                                {% for row in data %}
-                            <tr>
-                                {% for cell in row %}
-                                <td>{{ cell }}</td>
-                                {% endfor %}
-                            </tr>
-                            {% endfor %}
-                        </table>
-                        <h1><%= name %></h1>
                         <script>
-                            function sendAjax() {
+                            showAjax();
+                            function submitAjax() {
                                 const name = document.getElementById("name").value;
                                 const ssn = document.getElementById("ssn").value;
                                 const state = document.getElementById("state").value;
@@ -77,12 +60,33 @@
                                     data: {name:name,ssn:ssn,state:state},
                                     dataType:'json',
                                     success: function(res) {
-                                        head.innerHTML = "Name / Category / Region";
-                                        let temp = [];
-                                        for(let i = 0;i<res.length;i++) {
-                                            temp += res[i] + "<br>";
+                                        showAjax()
+                                    }
+                                });
+                            }
+                            function showAjax() {
+                                $.ajax({
+                                    type: "get",
+                                    url: 'http://localhost:8080/data/:name/:ssn/:state',
+                                    data: {},
+                                    dataType:'json',
+                                    success: function(res) {
+                                        var return_value = "";
+                                        return_value += "<table>\n"
+                                        return_value += "<tr>\n"
+                                        for(let k=0;k<res.headings.length;k++) {
+                                            return_value += "<th>"+res.headings[k]+"</th>\n"
                                         }
-                                        answer.innerHTML = temp;
+                                        return_value += "</tr>\n"
+                                        for(let i=0;i<res.data.length;i++) {
+                                            return_value += "<tr>\n"
+                                            for(let j=0;j<res.headings.length;j++) {
+                                                return_value += "<td>"+res.data[i][j]+"</td>\n"
+                                            }
+                                            return_value += "</tr>\n"
+                                        }
+                                        return_value += "</table>\n"
+                                        $('article').append(return_value);
                                     }
                                 });
                             }
