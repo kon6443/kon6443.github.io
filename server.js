@@ -24,6 +24,18 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/dev', function(req, res) {
+    res.sendFile(__dirname + '/dev.html');
+});
+
+app.get('/private', function(req, res) {
+    res.sendFile(__dirname + '/private.html');
+});
+
+app.get('/about', function(req, res) {
+    res.sendFile(__dirname + '/about.html');
+});
+
 app.get('/image', function(req, res) {
     res.sendFile(__dirname + '/image.html');
 });
@@ -67,16 +79,31 @@ app.get('/data/:name/:ssn/:state', function(req, res) {
     });
 });
 
-app.post('/data', function(req, res) {
-    const {name, ssn, state} = req.body;
+app.delete('/data/:id', function(req, res) {
+    const {id} = req.body;
     var options = {
         mode: 'json',
         pythonPath:'',  
         pythonOptions:['-u'],
         scriptPath:'',
+        args: [id]
+    };
+    PythonShell.PythonShell.run('dbDelete.py', options, function(err, results) {
+        if(err) throw err;
+        res.status(200).send(results[0]);
+    });
+});
+
+app.post('/data', function(req, res) {
+    const {name, ssn, state} = req.body;
+    var options = {
+        mode: 'json',
+        pythonPath:'',
+        pythonOptions:['-u'],
+        scriptPath:'',
         args: [name,ssn,state]
     };
-    PythonShell.PythonShell.run('dbPrac.py', options, function(err, results) {
+    PythonShell.PythonShell.run('dbPost.py', options, function(err, results) {
         if(err) throw err;
         res.status(200).send(results[0]);
     });
