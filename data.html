@@ -24,29 +24,48 @@
             <ul class="item-list mySelf">
                 <ul class="about">
                     <article class="about-text">
-                        <form action="http://localhost:8080/data" method="post" id="signup">
+                        <form id="signup">
+                            <h1>Personal info delete example</h1>
+                            <div class="field">
+                                <label for="id">ID:</label>
+                                <input type="text" id="id" name="id" placeholder="Enter your ID" /><br><br>
+                            </div>
+                            <button type="button" onclick="deleteAjax()">Submit</button><br><br>
+                        </form>
+                        <form id="signup">
                             <h1>Personal info post example</h1>
                             <div class="field">
                                 <label for="name">Name:</label>
                                 <input type="text" id="name" name="name" placeholder="Enter your fullname" /><br><br>
-                                <small></small>
                             </div>
                             <div class="field">
                                 <label for="ssn">SSN:</label>
                                 <input type="text" id="ssn" name="ssn" placeholder="Enter your SSN" /><br><br>
-                                <small></small>
                             </div>
 							<div class="field">
                                 <label for="state">State:</label>
                                 <input type="text" id="state" name="state" placeholder="Enter your state" /><br><br>
-                                <small></small>
                             </div>
                             <button type="button" onclick="submitAjax()">Submit</button><br><br>
-                            <span id="head"></span> <br>
-                            <span id="answer"></span> <br><br>
+                            <h1>DB Table</h1> <br>
+                            <span id="answer"></span> 
                         </form>
                         <script>
                             showAjax();
+                            function deleteAjax() {
+                                const id = document.getElementById("id").value;
+                                document.getElementById("id").value = "";
+                                $.ajax({
+                                    type: "delete",
+                                    url: 'http://localhost:8080/data/:id',
+                                    data: {id:id},
+                                    dataType:'json',
+                                    success: function(res) {
+                                        location.reload()
+                                        showAjax()
+                                    }
+                                });
+                            }
                             function submitAjax() {
                                 const name = document.getElementById("name").value;
                                 const ssn = document.getElementById("ssn").value;
@@ -60,6 +79,7 @@
                                     data: {name:name,ssn:ssn,state:state},
                                     dataType:'json',
                                     success: function(res) {
+                                        location.reload()
                                         showAjax()
                                     }
                                 });
