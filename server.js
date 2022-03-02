@@ -1,10 +1,11 @@
 const express = require('express');
 const app = express();
-
+const calc = require('./module/calc');
 //  To use python script
 var PythonShell = require('python-shell');
 
 const bodyParser = require('body-parser');
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 // parse application/json
@@ -36,8 +37,43 @@ app.get('/about', function(req, res) {
     res.sendFile(__dirname + '/about.html');
 });
 
-app.get('/image', function(req, res) {
-    res.sendFile(__dirname + '/image.html');
+app.get('/login', function(req, res) {
+    res.sendFile(__dirname + '/login.html');
+});
+
+app.post('/login', function(req, res) {
+    console.log('/login has been called.');
+    const {id, pw, pwc} = req.body;
+    console.log('id: ',id, 'pw: ',pw,'pwc: ',pwc);
+    console.log('Sequelize starting...');
+    var User = sequelize.define('user', {
+        ID: {type: sequelize.STRING, allowNull: false},
+        PW: {type: sequelize.STRING, allowNull: false},
+        PWC:{type: sequelize.STRING, allowNull: false}
+    }
+    );
+    User.create({ID:id,PW:pw,PWC:pwc})
+    .then(function(user){
+        console.log(user.get('ID'));
+        console.log(user.get('PW'));
+        console.log(user.get('PWC'));
+    }
+    );
+
+
+    /*
+    var options = {
+        mode: 'json',
+        pythonPath:'',
+        pythonOptions:['-u'],
+        scriptPath:'',
+        args: [id,pw,pwc]
+    };
+    PythonShell.PythonShell.run('-.py', options, function(err, results) {
+        if(err) throw err;
+        res.status(200).send(results[0]);
+    });
+    */
 });
 
 app.get('/result', function(req, res) {
