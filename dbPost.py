@@ -41,38 +41,9 @@ def insert(name, category, state):
         cursor.execute(sql,(name,category,state))
         conn.commit()        
 
-        '''
-        # connection closing
-        conn.close()
-        '''
-    
-def main2(name,category,state):
-    while(True):
-        print('0: Insert')
-        print('1: Show')
-        print('2: Delete')
-        user_input = int(input('Enter a number you want to: '))
-        if(user_input==0):
-            insert(name, category, state)
-        elif(user_input==1):
-            show()
-        elif(user_input==2):
-            user_input = int(input('Enter an ID that you wanna delete: '))
-            delete(user_input)
-
-def delete(arg):
-    user_input = int(input('Enter an ID that you wanna delete: '))
-    delete(user_input)
-    show()
-
-def add(name,category,state):
-    insert(name, category, state)
-    show()
-
 def main(arg):
     name, category, state = arg[:]
     insert(name,category,state)
-    #return_value = json.dumps(arg)
     show()
 
 if __name__ == '__main__':

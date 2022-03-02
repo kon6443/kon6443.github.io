@@ -10,7 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ejs": "^3.1.6",
     "express": "^4.17.1",
-    "python-shell": "^3.0.1"
+    "python-shell": "^3.0.1",
+    "sequelize": "^6.17.0",
+    "sqlite": "^4.0.23",
+    "sqlite3": "^4.2.0"
   }
 }
