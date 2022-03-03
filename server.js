@@ -1,10 +1,14 @@
 const express = require('express');
 const app = express();
+
 const calc = require('./module/calc');
+const sequelize = require('./module/dataBase');
+
 //  To use python script
 var PythonShell = require('python-shell');
 
 const bodyParser = require('body-parser');
+const { response } = require('express');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -42,23 +46,20 @@ app.get('/login', function(req, res) {
 });
 
 app.post('/login', function(req, res) {
-    console.log('/login has been called.');
+    console.log('/signup has been called.');
     const {id, pw, pwc} = req.body;
     console.log('id: ',id, 'pw: ',pw,'pwc: ',pwc);
-    console.log('Sequelize starting...');
-    var User = sequelize.define('user', {
-        ID: {type: sequelize.STRING, allowNull: false},
-        PW: {type: sequelize.STRING, allowNull: false},
-        PWC:{type: sequelize.STRING, allowNull: false}
+
+    if(id&&pw&&pwc) {
+        if(pw!==pwc) {
+            res.send('Your password and password confirmation have to be same.');
+        } else {
+            //Check if an ID already exists or not.
+            //If not, add the account.
+        }
+    } else {
+        res.send('Please fill out the blanks.');
     }
-    );
-    User.create({ID:id,PW:pw,PWC:pwc})
-    .then(function(user){
-        console.log(user.get('ID'));
-        console.log(user.get('PW'));
-        console.log(user.get('PWC'));
-    }
-    );
 
 
     /*
