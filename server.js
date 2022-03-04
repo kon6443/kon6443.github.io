@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 
 const calc = require('./module/calc');
-const sequelize = require('./module/dataBase');
 
 //  To use python script
 var PythonShell = require('python-shell');
@@ -19,6 +18,9 @@ app.use(express.static(__dirname + ''));
 app.use(express.json());
 
 app.engine('html', require('ejs').renderFile);
+
+var MongoClient = require('mongodb').MongoClient;
+var url = 'mongodb://localholst:27017/UserDB';
 
 const port = 8080;
 app.listen(port, function() {
@@ -50,6 +52,14 @@ app.post('/login', function(req, res) {
     const {id, pw, pwc} = req.body;
     console.log('id: ',id, 'pw: ',pw,'pwc: ',pwc);
 
+    MongoClient.connect(url, function(err, db) {
+        if(err) throw err;
+        console.log('Mongo client connected..');
+        db.close();
+    }
+    );
+    
+    /*
     if(id&&pw&&pwc) {
         if(pw!==pwc) {
             res.send('Your password and password confirmation have to be same.');
@@ -60,20 +70,6 @@ app.post('/login', function(req, res) {
     } else {
         res.send('Please fill out the blanks.');
     }
-
-
-    /*
-    var options = {
-        mode: 'json',
-        pythonPath:'',
-        pythonOptions:['-u'],
-        scriptPath:'',
-        args: [id,pw,pwc]
-    };
-    PythonShell.PythonShell.run('-.py', options, function(err, results) {
-        if(err) throw err;
-        res.status(200).send(results[0]);
-    });
     */
 });
 
