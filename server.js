@@ -19,8 +19,8 @@ app.use(express.json());
 
 app.engine('html', require('ejs').renderFile);
 
-var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://localholst:27017/UserDB';
+//var MongoClient = require('mongodb').MongoClient;
+//var url = 'mongodb://localhost:27017/userDB';
 
 const port = 8080;
 app.listen(port, function() {
@@ -51,15 +51,8 @@ app.post('/login', function(req, res) {
     console.log('/signup has been called.');
     const {id, pw, pwc} = req.body;
     console.log('id: ',id, 'pw: ',pw,'pwc: ',pwc);
-
-    MongoClient.connect(url, function(err, db) {
-        if(err) throw err;
-        console.log('Mongo client connected..');
-        db.close();
-    }
-    );
     
-    /*
+    
     if(id&&pw&&pwc) {
         if(pw!==pwc) {
             res.send('Your password and password confirmation have to be same.');
@@ -70,8 +63,25 @@ app.post('/login', function(req, res) {
     } else {
         res.send('Please fill out the blanks.');
     }
-    */
+    
 });
+
+// connecting Mongoose
+const mongoose = require('mongoose');
+mongoose.connect(
+    'mongodb+srv://kon6443:Dhska080100%40@cluster0.cefr7.mongodb.net/userDB?retryWrites=true&w=majority',
+    {
+      // useNewUrlPaser: true,
+      // useUnifiedTofology: true,
+      // useCreateIndex: true,
+      // useFindAndModify: false,
+    }
+  )
+  .then(() => console.log('MongoDB conected..'))
+  .catch((err) => {
+    console.log(err);
+});
+
 
 app.get('/result', function(req, res) {
     res.sendFile(__dirname + '/result.html');
