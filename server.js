@@ -1,13 +1,12 @@
 const express = require('express');
 const app = express();
 
-const calc = require('./module/calc');
+const User = require('./module/user');
 
 //  To use python script
 var PythonShell = require('python-shell');
 
 const bodyParser = require('body-parser');
-const { response } = require('express');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,9 +17,6 @@ app.use(express.static(__dirname + ''));
 app.use(express.json());
 
 app.engine('html', require('ejs').renderFile);
-
-var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://localholst:27017/UserDB';
 
 const port = 8080;
 app.listen(port, function() {
@@ -49,16 +45,10 @@ app.get('/login', function(req, res) {
 
 app.post('/login', function(req, res) {
     console.log('/signup has been called.');
-    const {id, pw, pwc} = req.body;
-    console.log('id: ',id, 'pw: ',pw,'pwc: ',pwc);
+    //const {id, pw, pwc} = req.body;
+    const user = new User(req.body);
+    console.log('id: ',user.id, 'pw: ',user.pw,'pwc: ',user.pwc);
 
-    MongoClient.connect(url, function(err, db) {
-        if(err) throw err;
-        console.log('Mongo client connected..');
-        db.close();
-    }
-    );
-    
     /*
     if(id&&pw&&pwc) {
         if(pw!==pwc) {
@@ -72,6 +62,24 @@ app.post('/login', function(req, res) {
     }
     */
 });
+
+// connecting Mongoose
+const mongoose = require('mongoose');
+mongoose.connect(
+    'mongodb+srv://**************@cluster0.cefr7.mongodb.net/userDB?retryWrites=true&w=majority',
+    {
+      // useNewUrlPaser: true,
+      // useUnifiedTofology: true,
+      // useCreateIndex: true,
+      // useFindAndModify: false,
+    }
+  )
+  .then(() => console.log('MongoDB conected..'))
+  .catch((err) => {
+    console.log(err);
+});
+
+
 
 app.get('/result', function(req, res) {
     res.sendFile(__dirname + '/result.html');
