@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 
 const User = require('./module/user');
+require('dotenv').config(); // calling enviroment variable from .env file
 
 //  To use python script
 var PythonShell = require('python-shell');
@@ -44,29 +45,38 @@ app.get('/login', function(req, res) {
 });
 
 app.post('/login', function(req, res) {
-    console.log('/signup has been called.');
-    //const {id, pw, pwc} = req.body;
     const user = new User(req.body);
-    console.log('id: ',user.id, 'pw: ',user.pw,'pwc: ',user.pwc);
-
-    /*
-    if(id&&pw&&pwc) {
-        if(pw!==pwc) {
+    console.log('user.id: ',user.id, 'user.pw: ',user.pw,'user.pwc: ',user.pwc);
+    if(user.id&&user.pw&&user.pwc) {
+        if(user.pw!==user.pwc) {
             res.send('Your password and password confirmation have to be same.');
         } else {
             //Check if an ID already exists or not.
             //If not, add the account.
+            console.log('pw and pwc matches. Start to save account informaton.');
+            user.save();
         }
     } else {
         res.send('Please fill out the blanks.');
     }
-    */
 });
+
+/*
+var MongoClient = require('mongodb').MongoClient;
+var url = 'mongodb://localhost:27017/userDB';
+MongoClient.connect(url, function(err, db) {
+    if(err) throw err;
+    console.log('Mongo Client connected..');
+    db.close();
+});
+*/
+
+
 
 // connecting Mongoose
 const mongoose = require('mongoose');
 mongoose.connect(
-    'mongodb+srv://**************@cluster0.cefr7.mongodb.net/userDB?retryWrites=true&w=majority',
+    process.env.MONGO_URI,
     {
       // useNewUrlPaser: true,
       // useUnifiedTofology: true,
@@ -78,7 +88,6 @@ mongoose.connect(
   .catch((err) => {
     console.log(err);
 });
-
 
 
 app.get('/result', function(req, res) {
