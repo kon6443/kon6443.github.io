@@ -38,11 +38,18 @@
                                 <label for="pwc">PW confirmation:</label>
                                 <input type="text" id="pwc" name="pwc" placeholder="PW confirmation" /><br><br>
                             </div>
-                            <button type="button" onclick="submitAjax()">Submit</button><br><br>
+                            <button type="button" onclick="SignupAjax()">Submit</button><br><br>
+                        </form>
+                        <form id="signup">
+                            <h1>Find ID example</h1>
+                            <div class="field">
+                                <label for="findid">ID:</label>
+                                <input type="text" id="id" name="id" placeholder="Enter your fullname" /><br><br>
+                            </div>
+                            <button type="button" onclick="FindIDAjax()">Submit</button><br><br>
                         </form>
                         <script>
-                            function submitAjax() {
-								console.log('sending ajax');
+                            function SignupAjax() {
 								const id = document.getElementById("id").value;
                                 const pw = document.getElementById("pw").value;
                                 const pwc = document.getElementById("pwc").value;
@@ -53,6 +60,19 @@
                                     type: "post",
                                     url: 'http://localhost:8080/login',
                                     data: {id:id,pw:pw,pwc:pwc},
+                                    dataType:'text',
+                                    success: function(res) {
+										console.log('success');
+                                    }
+                                });
+                            }
+                            function FindIDAjax() {
+								const id = document.getElementById("findid").value;
+                                document.getElementById("findid").value = "";
+                                $.ajax({
+                                    type: "post",
+                                    url: 'http://localhost:8080/login',
+                                    data: {id:id},
                                     dataType:'text',
                                     success: function(res) {
 										console.log('success');

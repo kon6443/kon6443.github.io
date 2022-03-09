@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 
+// connecting Mongoose
+const mongoose = require('mongoose');
+
 const User = require('./module/user');
 require('dotenv').config(); // calling enviroment variable from .env file
 
@@ -15,6 +18,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(express.static(__dirname + ''));
+
+// allow us to get teh data in request.body;
 app.use(express.json());
 
 app.engine('html', require('ejs').renderFile);
@@ -45,8 +50,25 @@ app.get('/login', function(req, res) {
 });
 
 app.post('/login', function(req, res) {
-    const user = new User(req.body);
-    console.log('user.id: ',user.id, 'user.pw: ',user.pw,'user.pwc: ',user.pwc);
+    const {id,pw,pwc} = req.body;
+    let user = new User(req.body);
+    console.log('user.id: ',user.id , 'user.pw: ',user.pw , 'user.pwc: ',user.pwc );
+    try {
+        console.log('try');
+        let user = User.findOne({ id });
+        console.log(user);
+        if(user) {
+            console.log('if user statement');
+            return res
+            .status(400)
+            .json({errors: [{msg: "User already exists"}]});
+        }
+    } catch (error) {
+        console.log('Internal server error');
+        console.error(error.message);
+        res.status(500).send('Server Error');
+    }
+    
     if(user.id&&user.pw&&user.pwc) {
         if(user.pw!==user.pwc) {
             res.send('Your password and password confirmation have to be same.');
@@ -61,20 +83,6 @@ app.post('/login', function(req, res) {
     }
 });
 
-/*
-var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://localhost:27017/userDB';
-MongoClient.connect(url, function(err, db) {
-    if(err) throw err;
-    console.log('Mongo Client connected..');
-    db.close();
-});
-*/
-
-
-
-// connecting Mongoose
-const mongoose = require('mongoose');
 mongoose.connect(
     process.env.MONGO_URI,
     {
