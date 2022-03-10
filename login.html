@@ -41,12 +41,16 @@
                             <button type="button" onclick="SignupAjax()">Submit</button><br><br>
                         </form>
                         <form id="signup">
-                            <h1>Find ID example</h1>
+                            <h1>Sign in example</h1>
                             <div class="field">
-                                <label for="findid">ID:</label>
-                                <input type="text" id="id" name="id" placeholder="Enter your fullname" /><br><br>
+                                <label for="signinID">ID:</label>
+                                <input type="text" id="signinID" name="signinID" placeholder="Enter your fullname" /><br><br>
                             </div>
-                            <button type="button" onclick="FindIDAjax()">Submit</button><br><br>
+                            <div class="field">
+                                <label for="signinPW">PW:</label>
+                                <input type="text" id="signinPW" name="signinPW" placeholder="Enter your password" /><br><br>
+                            </div>
+                            <button type="button" onclick="signInIDAjax()">Submit</button><br><br>
                         </form>
                         <script>
                             function SignupAjax() {
@@ -62,20 +66,22 @@
                                     data: {id:id,pw:pw,pwc:pwc},
                                     dataType:'text',
                                     success: function(res) {
-										console.log('success');
+                                        console.log(res);
                                     }
                                 });
                             }
-                            function FindIDAjax() {
-								const id = document.getElementById("findid").value;
-                                document.getElementById("findid").value = "";
+                            function signInIDAjax() {
+								const id = document.getElementById("singinID").value;
+                                const pw = document.getElementById("signinPW").value;
+                                document.getElementById("singinID").value = "";
+                                document.getElementById("signinPW").value = "";
                                 $.ajax({
-                                    type: "post",
+                                    type: "get",
                                     url: 'http://localhost:8080/login',
-                                    data: {id:id},
+                                    data: {id:id,pw:pw},
                                     dataType:'text',
                                     success: function(res) {
-										console.log('success');
+                                        console.log(res);
                                     }
                                 });
                             }

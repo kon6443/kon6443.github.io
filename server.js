@@ -50,37 +50,25 @@ app.get('/login', function(req, res) {
 });
 
 app.post('/login', function(req, res) {
-    const {id,pw,pwc} = req.body;
     let user = new User(req.body);
     console.log('user.id: ',user.id , 'user.pw: ',user.pw , 'user.pwc: ',user.pwc );
-    try {
-        console.log('try');
-        let user = User.findOne({ id });
-        console.log(user);
-        if(user) {
-            console.log('if user statement');
-            return res
-            .status(400)
-            .json({errors: [{msg: "User already exists"}]});
+    User.findOne({id:(user.id)}, function(err, docs) {
+        if(err) throw err;
+        else if(docs == null) { // Entered ID is available.
+            if(user.id&&user.pw&&user.pwc) {
+                if(user.pw!==user.pwc) {// password and password confirmation are not the same.
+                    res.send('Your password and password confirmation have to be same.');
+                } else {    // adding a new account.
+                    res.send('pw and pwc matches. Start to save account informaton.');
+                    res.send('user.id: ',user.id , 'user.pw: ',user.pw , 'user.pwc: ',user.pwc );
+                    user.save();
+                }
+            } else res.send('Please enter all the blanks.');
         }
-    } catch (error) {
-        console.log('Internal server error');
-        console.error(error.message);
-        res.status(500).send('Server Error');
-    }
-    
-    if(user.id&&user.pw&&user.pwc) {
-        if(user.pw!==user.pwc) {
-            res.send('Your password and password confirmation have to be same.');
-        } else {
-            //Check if an ID already exists or not.
-            //If not, add the account.
-            console.log('pw and pwc matches. Start to save account informaton.');
-            user.save();
+        else {
+            res.send('Your entered ID already exists.');
         }
-    } else {
-        res.send('Please fill out the blanks.');
-    }
+    });    
 });
 
 mongoose.connect(
