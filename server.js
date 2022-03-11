@@ -49,9 +49,23 @@ app.get('/login', function(req, res) {
     res.sendFile(__dirname + '/login.html');
 });
 
-app.post('/login', function(req, res) {
+app.post('/login/:signInid/:signInpw', function(req, res) {
     let user = new User(req.body);
-    console.log('user.id: ',user.id , 'user.pw: ',user.pw , 'user.pwc: ',user.pwc );
+    User.findOne({id:(user.id)}, function(err, docs) {
+        if(err) throw err;
+        else if(docs == null) { // Entered ID does not exist.
+            res.send('Entered ID does not exist.');
+        }
+        else {  // Entered ID matches.
+            if(user.pw===docs.pw) {
+                res.send('logged in here.');
+            }
+        }
+    });
+});
+
+app.post('/login/:signUpid/:signUppw/:signUppwc', function(req, res) {
+    let user = new User(req.body);
     User.findOne({id:(user.id)}, function(err, docs) {
         if(err) throw err;
         else if(docs == null) { // Entered ID is available.
@@ -59,9 +73,8 @@ app.post('/login', function(req, res) {
                 if(user.pw!==user.pwc) {// password and password confirmation are not the same.
                     res.send('Your password and password confirmation have to be same.');
                 } else {    // adding a new account.
-                    res.send('pw and pwc matches. Start to save account informaton.');
-                    res.send('user.id: ',user.id , 'user.pw: ',user.pw , 'user.pwc: ',user.pwc );
                     user.save();
+                    res.send('pw and pwc matches. Start to save account informaton.');
                 }
             } else res.send('Please enter all the blanks.');
         }

@@ -40,7 +40,7 @@
                             </div>
                             <button type="button" onclick="SignupAjax()">Submit</button><br><br>
                         </form>
-                        <form id="signup">
+                        <form id="singin">
                             <h1>Sign in example</h1>
                             <div class="field">
                                 <label for="signinID">ID:</label>
@@ -50,7 +50,7 @@
                                 <label for="signinPW">PW:</label>
                                 <input type="text" id="signinPW" name="signinPW" placeholder="Enter your password" /><br><br>
                             </div>
-                            <button type="button" onclick="signInIDAjax()">Submit</button><br><br>
+                            <button type="button" onclick="signInAjax()">Log in</button><br><br>
                         </form>
                         <script>
                             function SignupAjax() {
@@ -60,9 +60,10 @@
                                 document.getElementById("id").value = "";
                                 document.getElementById("pw").value = "";
                                 document.getElementById("pwc").value = "";
+                                console.log('sign up ajax has been called.');
                                 $.ajax({
                                     type: "post",
-                                    url: 'http://localhost:8080/login',
+                                    url: 'http://localhost:8080/login/:signUpid/:signUppw/:signUppwc',
                                     data: {id:id,pw:pw,pwc:pwc},
                                     dataType:'text',
                                     success: function(res) {
@@ -70,15 +71,16 @@
                                     }
                                 });
                             }
-                            function signInIDAjax() {
-								const id = document.getElementById("singinID").value;
-                                const pw = document.getElementById("signinPW").value;
-                                document.getElementById("singinID").value = "";
+                            function signInAjax() {
+								const signinID = document.getElementById("signinID").value;
+                                const signinPW = document.getElementById("signinPW").value;
+                                document.getElementById("signinID").value = "";
                                 document.getElementById("signinPW").value = "";
+                                console.log('sign in ajax has been called.');
                                 $.ajax({
-                                    type: "get",
-                                    url: 'http://localhost:8080/login',
-                                    data: {id:id,pw:pw},
+                                    type: "post",
+                                    url: 'http://localhost:8080/login/:signInid/:signInpw',
+                                    data: {id:signinID,pw:signinPW},
                                     dataType:'text',
                                     success: function(res) {
                                         console.log(res);
