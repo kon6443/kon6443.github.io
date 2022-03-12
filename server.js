@@ -24,6 +24,9 @@ app.use(express.json());
 
 app.engine('html', require('ejs').renderFile);
 
+// Using jsonwebtoken module.
+const jwt = require("jsonwebtoken");
+
 const port = 8080;
 app.listen(port, function() {
     console.log('Listening on '+port);
@@ -58,8 +61,35 @@ app.post('/login/:signInid/:signInpw', function(req, res) {
         }
         else {  // Entered ID matches.
             if(user.pw===docs.pw) {
-                res.send('logged in here.');
-            }
+
+                const payload = { // json web token 으로 변환할 데이터 정보
+                    user,
+                };
+                // json web token 생성하여 send 해주기
+                jwt.sign(
+                payload, // 변환할 데이터
+                process.env.SECRET_KEY, // secret key 값
+                { expiresIn: "1h" }, // token의 유효시간
+                (err, token) => {    
+                    if (err) throw err;
+                    res.send({ token }); // token 값 response 해주기
+                }
+                );
+                
+                // Verify token
+                try {
+                    // token 해독, token을 만들 때 설정한 secret key 값 : jwtSecret
+                    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+                    // req에 해독한 user 정보 생성 
+                    req.user = decoded.user;
+                    next();
+                } catch (error) {
+                    res.status(401).json({ msg: "Token is not valid" });
+                }
+
+
+
+            } else res.send('Your password does not match with your ID.');
         }
     });
 });
@@ -113,7 +143,7 @@ app.get('/result/country/:country', function(req, res) {
         scriptPath:'',
         args: [req.query.country]
     };
-    PythonShell.PythonShell.run('prePopulate.py', options, function(err, results) {
+    PythonShell.PythonShell.run('./pythonScript/prePopulate.py', options, function(err, results) {
         if(err) throw err;
         res.status(200).send(results[0]);
     });
@@ -131,7 +161,7 @@ app.get('/data/:name/:ssn/:state', function(req, res) {
         scriptPath:'',
         args: []
     };
-    PythonShell.PythonShell.run('dbShow.py', options, function(err, results) {
+    PythonShell.PythonShell.run('./pythonScript/dbShow.py', options, function(err, results) {
         if(err) throw err;
         const headings = ['id','Name','SSN','State'];
         res.status(200).send({headings:headings,data:results[0]});
@@ -147,7 +177,7 @@ app.delete('/data/:id', function(req, res) {
         scriptPath:'',
         args: [id]
     };
-    PythonShell.PythonShell.run('dbDelete.py', options, function(err, results) {
+    PythonShell.PythonShell.run('./pythonScript/dbDelete.py', options, function(err, results) {
         if(err) throw err;
         res.status(200).send(results[0]);
     });
@@ -162,7 +192,7 @@ app.post('/data', function(req, res) {
         scriptPath:'',
         args: [name,ssn,state]
     };
-    PythonShell.PythonShell.run('dbPost.py', options, function(err, results) {
+    PythonShell.PythonShell.run('./pythonScript/dbPost.py', options, function(err, results) {
         if(err) throw err;
         res.status(200).send(results[0]);
     });

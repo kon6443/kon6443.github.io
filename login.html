@@ -60,7 +60,6 @@
                                 document.getElementById("id").value = "";
                                 document.getElementById("pw").value = "";
                                 document.getElementById("pwc").value = "";
-                                console.log('sign up ajax has been called.');
                                 $.ajax({
                                     type: "post",
                                     url: 'http://localhost:8080/login/:signUpid/:signUppw/:signUppwc',
@@ -76,7 +75,6 @@
                                 const signinPW = document.getElementById("signinPW").value;
                                 document.getElementById("signinID").value = "";
                                 document.getElementById("signinPW").value = "";
-                                console.log('sign in ajax has been called.');
                                 $.ajax({
                                     type: "post",
                                     url: 'http://localhost:8080/login/:signInid/:signInpw',
