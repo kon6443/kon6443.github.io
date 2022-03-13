@@ -1,11 +1,17 @@
 const express = require('express');
 const app = express();
 
+require('dotenv').config(); // calling enviroment variable from .env file
+
 // connecting Mongoose
 const mongoose = require('mongoose');
+// Using jsonwebtoken module.
+const jwt = require("jsonwebtoken");
+const cookieParser = require('cookie-parser');
 
 const User = require('./module/user');
-require('dotenv').config(); // calling enviroment variable from .env file
+const { auth } = require('./module/authMiddleware');
+
 
 //  To use python script
 var PythonShell = require('python-shell');
@@ -16,6 +22,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 // parse application/json
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.use(express.static(__dirname + ''));
 
@@ -23,9 +30,6 @@ app.use(express.static(__dirname + ''));
 app.use(express.json());
 
 app.engine('html', require('ejs').renderFile);
-
-// Using jsonwebtoken module.
-const jwt = require("jsonwebtoken");
 
 const port = 8080;
 app.listen(port, function() {
@@ -52,44 +56,46 @@ app.get('/login', function(req, res) {
     res.sendFile(__dirname + '/login.html');
 });
 
-app.post('/login/:signInid/:signInpw', function(req, res) {
+app.post('/login/:signInid/:signInpw', function(req, res, next) {
     let user = new User(req.body);
     User.findOne({id:(user.id)}, function(err, docs) {
         if(err) throw err;
         else if(docs == null) { // Entered ID does not exist.
             res.send('Entered ID does not exist.');
         }
-        else {  // Entered ID matches.
-            if(user.pw===docs.pw) {
-
-                const payload = { // json web token 으로 변환할 데이터 정보
+        else {  // when entered ID matches.
+            if(user.pw===docs.pw) { 
+                const payload = { // put data into json web token
                     user,
                 };
-                // json web token 생성하여 send 해주기
+                // generating json web token and sending it
                 jwt.sign(
-                payload, // 변환할 데이터
-                process.env.SECRET_KEY, // secret key 값
-                { expiresIn: "1h" }, // token의 유효시간
+                payload, // data into payload
+                process.env.SECRET_KEY, // secret key value
+                { expiresIn: "1h" }, // token expiration time
                 (err, token) => {    
                     if (err) throw err;
-                    res.send({ token }); // token 값 response 해주기
+                    else {
+                        console.log('token: ', token);
+                        res.cookie('user', token);
+                        next();
+                        console.log('next() done.');
+                    }
                 }
                 );
-                
-                // Verify token
-                try {
-                    // token 해독, token을 만들 때 설정한 secret key 값 : jwtSecret
-                    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-                    // req에 해독한 user 정보 생성 
-                    req.user = decoded.user;
-                    next();
-                } catch (error) {
-                    res.status(401).json({ msg: "Token is not valid" });
-                }
-
-
-
             } else res.send('Your password does not match with your ID.');
+        }
+    });
+});
+
+app.post('/login/:signInid/:signInpw', auth, function(req, res) {
+    console.log('next function has been called!');
+    const user = req.decoded.user;
+    return res.status(200).json({
+        code: 200,
+        message: 'Token is valid.',
+        data: {
+          user: user
         }
     });
 });
