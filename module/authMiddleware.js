@@ -4,10 +4,14 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') }); 
 
 exports.auth = (req, res, next) => {
+    console.log('auth function has been called.');
     // 인증 완료
     try {
         // 요청 헤더에 저장된 토큰(req.headers.authorization)과 비밀키를 사용하여 토큰을 req.decoded에 반환
+        console.log('req.cookies.user: ', req.cookies.user);
         req.decoded = jwt.verify(req.cookies.user, process.env.SECRET_KEY);
+        console.log('req.decoded: ', req.decoded);
+        console.log('ans: ', jwt.verify(req.cookies.user, process.env.SECRET_KEY));
         return next();
     }
     // 인증 실패

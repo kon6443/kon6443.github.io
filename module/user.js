@@ -8,6 +8,11 @@ const userSchema = mongoose.Schema({  // making a schema called userSchema.
     required: true,
     unique: 1, // exists one unique value
   },
+  address: {
+    type: String,
+    required: true,
+    maxLength: 50,
+  },
   pw: {
     type: String,
     required: true,

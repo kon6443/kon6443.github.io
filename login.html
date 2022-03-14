@@ -31,6 +31,10 @@
                                 <input type="text" id="id" name="id" placeholder="Enter your fullname" /><br><br>
                             </div>
                             <div class="field">
+                                <label for="pw">Address:</label>
+                                <input type="text" id="address" name="address" placeholder="Enter your address" /><br><br>
+                            </div>
+                            <div class="field">
                                 <label for="pw">PW:</label>
                                 <input type="text" id="pw" name="pw" placeholder="Enter your password" /><br><br>
                             </div>
@@ -55,18 +59,21 @@
                         <script>
                             function SignupAjax() {
 								const id = document.getElementById("id").value;
+                                const address = document.getElementById("address").value;
                                 const pw = document.getElementById("pw").value;
                                 const pwc = document.getElementById("pwc").value;
                                 document.getElementById("id").value = "";
+                                document.getElementById("address").value = "";
                                 document.getElementById("pw").value = "";
                                 document.getElementById("pwc").value = "";
                                 $.ajax({
                                     type: "post",
-                                    url: 'http://localhost:8080/login/:signUpid/:signUppw/:signUppwc',
-                                    data: {id:id,pw:pw,pwc:pwc},
+                                    url: 'http://localhost:8080/login/:signUpid/:signUpaddress/:signUppw/:signUppwc',
+                                    data: {id:id,address:address,pw:pw,pwc:pwc},
                                     dataType:'text',
                                     success: function(res) {
-                                        console.log(res);
+                                        console.log('res: ', res);
+                                        console.log('document.cookie: ', document.cookie);
                                     }
                                 });
                             }

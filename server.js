@@ -66,7 +66,7 @@ app.post('/login/:signInid/:signInpw', function(req, res, next) {
         else {  // when entered ID matches.
             if(user.pw===docs.pw) { 
                 const payload = { // put data into json web token
-                    user,
+                    docs,
                 };
                 // generating json web token and sending it
                 jwt.sign(
@@ -76,21 +76,19 @@ app.post('/login/:signInid/:signInpw', function(req, res, next) {
                 (err, token) => {    
                     if (err) throw err;
                     else {
-                        console.log('token: ', token);
+                        console.log('docs token: ', token);
                         res.cookie('user', token);
                         next();
-                        console.log('next() done.');
                     }
-                }
-                );
+                });
             } else res.send('Your password does not match with your ID.');
         }
     });
 });
 
 app.post('/login/:signInid/:signInpw', auth, function(req, res) {
-    console.log('next function has been called!');
-    const user = req.decoded.user;
+    const user = req.decoded.docs;
+    console.log('user: ', user);
     return res.status(200).json({
         code: 200,
         message: 'Token is valid.',
@@ -100,7 +98,7 @@ app.post('/login/:signInid/:signInpw', auth, function(req, res) {
     });
 });
 
-app.post('/login/:signUpid/:signUppw/:signUppwc', function(req, res) {
+app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, res) {
     let user = new User(req.body);
     User.findOne({id:(user.id)}, function(err, docs) {
         if(err) throw err;
@@ -109,6 +107,7 @@ app.post('/login/:signUpid/:signUppw/:signUppwc', function(req, res) {
                 if(user.pw!==user.pwc) {// password and password confirmation are not the same.
                     res.send('Your password and password confirmation have to be same.');
                 } else {    // adding a new account.
+                    console.log('user: ', user);
                     user.save();
                     res.send('pw and pwc matches. Start to save account informaton.');
                 }
