@@ -73,10 +73,9 @@ app.post('/login/:signInid/:signInpw', function(req, res, next) {
                 payload, // data into payload
                 process.env.SECRET_KEY, // secret key value
                 { expiresIn: "1h" }, // token expiration time
-                (err, token) => {    
+                (err, token) => {
                     if (err) throw err;
                     else {
-                        console.log('docs token: ', token);
                         res.cookie('user', token);
                         next();
                     }
@@ -88,7 +87,6 @@ app.post('/login/:signInid/:signInpw', function(req, res, next) {
 
 app.post('/login/:signInid/:signInpw', auth, function(req, res) {
     const user = req.decoded.docs;
-    console.log('user: ', user);
     return res.status(200).json({
         code: 200,
         message: 'Token is valid.',

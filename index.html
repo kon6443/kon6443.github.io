@@ -22,7 +22,10 @@
 		<div class="wrapper">
 			<h1 class="item-title">
 				<a class="emptyDeco whitePaint">Info</a>
-			</h1>	
+			</h1>
+			<article class="about-text">
+				<h1>Welcome User!</h1>
+			</article>
 			<ul class="item-list mySelf">
 				<ul class="about">
 					<article class="about-text">
@@ -68,8 +71,27 @@
 				<h1>about first h1</h1>
 				<p>Context can be written in this area.</p>
 			</ul>			
-			
 			</div>
+			<script>
+				loggedinInfo()
+				function loggedinInfo() {
+					console.log('loggedinInfo function has been called.');
+					$.ajax({
+						type: "post",
+						url: 'http://localhost:8080/',
+						data: {},
+						dataType:'text',
+						success: function(res) {
+							console.log('index res: ', res);
+							// var return_value = "";
+							// return_value += '<h1>Welcome ';
+							// return_value += res.data.id;
+							// return_value += '</h1>';
+							// $('article').append(return_value);
+						}
+					});
+				}
+			</script>
 		<!-- Option 1: Bootstrap Bundle with Popper -->
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 	</body>
