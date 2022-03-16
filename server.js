@@ -29,7 +29,7 @@ app.use(express.static(__dirname + ''));
 // allow us to get teh data in request.body;
 app.use(express.json());
 
-app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'ejs');  
 
 const port = 8080;
 app.listen(port, function() {
@@ -52,8 +52,21 @@ app.get('/about', function(req, res) {
     res.sendFile(__dirname + '/about.html');
 });
 
-app.get('/login', function(req, res) {
+app.get('/login', function(req, res, next) {
     res.sendFile(__dirname + '/login.html');
+    next();
+});
+
+app.get('/login', auth, function(req, res) {
+    const user = req.decoded;
+    console.log('req.error: ', req.error);
+    if(user) { //
+        console.log('get user true');
+        res.render('loggedin', {user:user.docs});
+    } else {
+        console.log('get user false');
+        res.sendFile(__dirname + '/login.html');
+    }
 });
 
 app.post('/login/:signInid/:signInpw', function(req, res, next) {
@@ -72,7 +85,7 @@ app.post('/login/:signInid/:signInpw', function(req, res, next) {
                 jwt.sign(
                 payload, // data into payload
                 process.env.SECRET_KEY, // secret key value
-                { expiresIn: "1h" }, // token expiration time
+                { expiresIn: "30s" }, // token expiration time
                 (err, token) => {
                     if (err) throw err;
                     else {
@@ -85,15 +98,29 @@ app.post('/login/:signInid/:signInpw', function(req, res, next) {
     });
 });
 
-app.post('/login/:signInid/:signInpw', auth, function(req, res) {
-    const user = req.decoded.docs;
-    return res.status(200).json({
-        code: 200,
-        message: 'Token is valid.',
-        data: {
-          user: user
-        }
-    });
+app.post('/login/:signInid/:signInpw', function(req, res) {
+    const return_value = auth();
+    console.log('return_value: ', return_value);
+    // console.log('login post');
+    // // return res.status(200).json({
+    // //     code: 200,
+    // //     message: 'Token is valid.',
+    // //     data: {
+    // //       user: user
+    // //     }
+    // // });
+    // // res.render(__dirname + '/loggedin.html',{user:user});
+    // res.sendFile(__dirname + '/loggedin.html');
+    const user = req.decoded;
+    console.log('post login user: ', user);
+    console.log('req.error: ', req.error);
+    if(user) { //
+        console.log('post user true');
+        res.render('loggedin', {user:user.docs});
+    } else {
+        console.log('post user false');
+        res.sendFile(__dirname + '/login.html');
+    }
 });
 
 app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, res) {

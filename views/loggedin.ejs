@@ -24,57 +24,26 @@
 			<ul class="item-list mySelf">
 				<ul class="about">
 					<article class="about-text">
-                        <form id="signup">
-                            <h1>Sign up example</h1>
-                            <div class="field">
-                                <label for="id">ID:</label>
-                                <input type="text" id="id" name="id" placeholder="Enter your fullname" /><br><br>
-                            </div>
-                            <div class="field">
-                                <label for="pw">Address:</label>
-                                <input type="text" id="address" name="address" placeholder="Enter your address" /><br><br>
-                            </div>
-                            <div class="field">
-                                <label for="pw">PW:</label>
-                                <input type="text" id="pw" name="pw" placeholder="Enter your password" /><br><br>
-                            </div>
-							<div class="field">
-                                <label for="pwc">PW confirmation:</label>
-                                <input type="text" id="pwc" name="pwc" placeholder="PW confirmation" /><br><br>
-                            </div>
-                            <button type="button" onclick="SignupAjax()">Submit</button><br><br>
-                        </form>
-                        <form id="singin">
-                            <h1>Sign in example</h1>
-                            <div class="field">
-                                <label for="signinID">ID:</label>
-                                <input type="text" id="signinID" name="signinID" placeholder="Enter your fullname" /><br><br>
-                            </div>
-                            <div class="field">
-                                <label for="signinPW">PW:</label>
-                                <input type="text" id="signinPW" name="signinPW" placeholder="Enter your password" /><br><br>
-                            </div>
-                            <button type="button" onclick="signInAjax()">Log in</button><br><br>
-                        </form>
-                        
+                        <div>
+                            <form id="singin">
+                                <h1>Sign out example</h1>
+                                <button type="button" onclick="signOut()">Log out</button><br><br>
+                            </form>
+                            <h1>Welcome <%= user.id %>! <br>
+                                Your address is <%= user.address %>. <br>
+                                You are logged in now. <br>
+                                This is your private page! <br>
+                            </h1>
+                        </div>
                         <script>
-                            function SignupAjax() {
-								const id = document.getElementById("id").value;
-                                const address = document.getElementById("address").value;
-                                const pw = document.getElementById("pw").value;
-                                const pwc = document.getElementById("pwc").value;
-                                document.getElementById("id").value = "";
-                                document.getElementById("address").value = "";
-                                document.getElementById("pw").value = "";
-                                document.getElementById("pwc").value = "";
+                            function signOut() {
                                 $.ajax({
-                                    type: "post",
-                                    url: 'http://localhost:8080/login/:signUpid/:signUpaddress/:signUppw/:signUppwc',
-                                    data: {id:id,address:address,pw:pw,pwc:pwc},
+                                    type: "get",
+                                    url: 'http://localhost:8080/login',
+                                    data: {},
                                     dataType:'text',
                                     success: function(res) {
-                                        console.log('res: ', res);
-                                        console.log('document.cookie: ', document.cookie);
+
                                     }
                                 });
                             }
@@ -89,12 +58,13 @@
                                     data: {id:signinID,pw:signinPW},
                                     dataType:'text',
                                     success: function(res) {
-                                        console.log('res: ', res);
-                                        login();
+                                        console.log('sign in complete res: ', res);
+                                        // login();
                                     }
                                 });
                             }
                             function login() {
+                                console.log('login fuction has been called.');
                                 $.ajax({
                                     type: "get",
                                     url: 'http://localhost:8080/login',
@@ -102,7 +72,7 @@
                                     data: {},
                                     dataType:'text',
                                     success: function(res) {
-                                        // console.log('show logged in : ', res);
+                                        console.log('show logged in : ', res);
                                         // var return_value = "";
                                         // $('article').append(return_value);
                                     }
