@@ -89,8 +89,8 @@
                                     data: {id:signinID,pw:signinPW},
                                     dataType:'text',
                                     success: function(res) {
+                                        location.reload();
                                         console.log('res: ', res);
-                                        login();
                                     }
                                 });
                             }
@@ -102,9 +102,7 @@
                                     data: {},
                                     dataType:'text',
                                     success: function(res) {
-                                        // console.log('show logged in : ', res);
-                                        // var return_value = "";
-                                        // $('article').append(return_value);
+                                        
                                     }
                                 });
                             }

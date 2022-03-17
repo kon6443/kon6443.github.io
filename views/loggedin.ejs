@@ -39,11 +39,11 @@
                             function signOut() {
                                 $.ajax({
                                     type: "get",
-                                    url: 'http://localhost:8080/login',
+                                    url: 'http://localhost:8080/logOut',
                                     data: {},
                                     dataType:'text',
                                     success: function(res) {
-
+                                        location.reload();
                                     }
                                 });
                             }
@@ -59,7 +59,7 @@
                                     dataType:'text',
                                     success: function(res) {
                                         console.log('sign in complete res: ', res);
-                                        // login();
+                                        
                                     }
                                 });
                             }

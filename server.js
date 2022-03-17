@@ -59,7 +59,6 @@ app.get('/login', function(req, res, next) {
 
 app.get('/login', auth, function(req, res) {
     const user = req.decoded;
-    console.log('req.error: ', req.error);
     if(user) { //
         console.log('get user true');
         res.render('loggedin', {user:user.docs});
@@ -67,6 +66,10 @@ app.get('/login', auth, function(req, res) {
         console.log('get user false');
         res.sendFile(__dirname + '/login.html');
     }
+});
+
+app.get('/logOut', function(req, res) {
+    return res.cookie('user', '');
 });
 
 app.post('/login/:signInid/:signInpw', function(req, res, next) {
@@ -85,12 +88,12 @@ app.post('/login/:signInid/:signInpw', function(req, res, next) {
                 jwt.sign(
                 payload, // data into payload
                 process.env.SECRET_KEY, // secret key value
-                { expiresIn: "30s" }, // token expiration time
+                { expiresIn: "10s" }, // token expiration time
                 (err, token) => {
                     if (err) throw err;
                     else {
                         res.cookie('user', token);
-                        next();
+                        return next();
                     }
                 });
             } else res.send('Your password does not match with your ID.');
@@ -98,9 +101,7 @@ app.post('/login/:signInid/:signInpw', function(req, res, next) {
     });
 });
 
-app.post('/login/:signInid/:signInpw', function(req, res) {
-    const return_value = auth();
-    console.log('return_value: ', return_value);
+app.post('/login/:signInid/:signInpw', auth, function(req, res) {
     // console.log('login post');
     // // return res.status(200).json({
     // //     code: 200,
@@ -112,8 +113,6 @@ app.post('/login/:signInid/:signInpw', function(req, res) {
     // // res.render(__dirname + '/loggedin.html',{user:user});
     // res.sendFile(__dirname + '/loggedin.html');
     const user = req.decoded;
-    console.log('post login user: ', user);
-    console.log('req.error: ', req.error);
     if(user) { //
         console.log('post user true');
         res.render('loggedin', {user:user.docs});
