@@ -12,7 +12,6 @@ const cookieParser = require('cookie-parser');
 const User = require('./module/user');
 const { auth } = require('./module/authMiddleware');
 
-
 //  To use python script
 var PythonShell = require('python-shell');
 
@@ -36,8 +35,13 @@ app.listen(port, function() {
     console.log('Listening on '+port);
 });
 
-app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/index.html');
+app.get('/', auth, function(req, res) {
+    const user = req.decoded;
+    if(user) {
+        return res.render('index', {user:user.docs});
+    } else {
+        return res.sendFile(__dirname + '/home.html');
+    }
 });
 
 app.get('/dev', function(req, res) {
@@ -52,24 +56,17 @@ app.get('/about', function(req, res) {
     res.sendFile(__dirname + '/about.html');
 });
 
-app.get('/login', function(req, res, next) {
-    res.sendFile(__dirname + '/login.html');
-    next();
-});
-
-app.get('/login', auth, function(req, res) {
+app.get('/login', auth, function(req, res, next) {
     const user = req.decoded;
-    if(user) { //
-        console.log('get user true');
-        res.render('loggedin', {user:user.docs});
+    if(user) {
+        return res.render('loggedin', {user:user.docs});
     } else {
-        console.log('get user false');
-        res.sendFile(__dirname + '/login.html');
+        return res.sendFile(__dirname + '/login.html');
     }
 });
 
 app.get('/logOut', function(req, res) {
-    return res.cookie('user', '');
+    return res.clearCookie('user').end();
 });
 
 app.post('/login/:signInid/:signInpw', function(req, res, next) {
@@ -77,7 +74,7 @@ app.post('/login/:signInid/:signInpw', function(req, res, next) {
     User.findOne({id:(user.id)}, function(err, docs) {
         if(err) throw err;
         else if(docs == null) { // Entered ID does not exist.
-            res.send('Entered ID does not exist.');
+            return res.send('Entered ID does not exist.');
         }
         else {  // when entered ID matches.
             if(user.pw===docs.pw) { 
@@ -88,38 +85,18 @@ app.post('/login/:signInid/:signInpw', function(req, res, next) {
                 jwt.sign(
                 payload, // data into payload
                 process.env.SECRET_KEY, // secret key value
-                { expiresIn: "10s" }, // token expiration time
+                { expiresIn: "30m" }, // token expiration time
                 (err, token) => {
                     if (err) throw err;
                     else {
-                        res.cookie('user', token);
-                        return next();
+                        return res
+                        .cookie('user', token,{maxAge:30*60 * 1000})
+                        .end();
                     }
                 });
-            } else res.send('Your password does not match with your ID.');
+            } else return res.send('Your password does not match with your ID.');
         }
     });
-});
-
-app.post('/login/:signInid/:signInpw', auth, function(req, res) {
-    // console.log('login post');
-    // // return res.status(200).json({
-    // //     code: 200,
-    // //     message: 'Token is valid.',
-    // //     data: {
-    // //       user: user
-    // //     }
-    // // });
-    // // res.render(__dirname + '/loggedin.html',{user:user});
-    // res.sendFile(__dirname + '/loggedin.html');
-    const user = req.decoded;
-    if(user) { //
-        console.log('post user true');
-        res.render('loggedin', {user:user.docs});
-    } else {
-        console.log('post user false');
-        res.sendFile(__dirname + '/login.html');
-    }
 });
 
 app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, res) {
@@ -131,9 +108,8 @@ app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, r
                 if(user.pw!==user.pwc) {// password and password confirmation are not the same.
                     res.send('Your password and password confirmation have to be same.');
                 } else {    // adding a new account.
-                    console.log('user: ', user);
                     user.save();
-                    res.send('pw and pwc matches. Start to save account informaton.');
+                    res.send('You have just created your new account!');
                 }
             } else res.send('Please enter all the blanks.');
         }

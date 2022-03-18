@@ -25,10 +25,10 @@ exports.auth = (req, res, next) => {
         if (error.name === 'JsonWebTokenError') {
             console.log('JsonWebTokenError');
             next();
-            return res.status(401).json({
-                code: 401,
-                message: 'Invalid token.'
-            });
+            // return res.status(401).json({
+            //     code: 401,
+            //     message: 'Invalid token.'
+            // });
         }
     }
 }

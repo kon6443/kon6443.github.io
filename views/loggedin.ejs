@@ -25,7 +25,7 @@
 				<ul class="about">
 					<article class="about-text">
                         <div>
-                            <form id="singin">
+                            <form id="signOut">
                                 <h1>Sign out example</h1>
                                 <button type="button" onclick="signOut()">Log out</button><br><br>
                             </form>
@@ -73,8 +73,6 @@
                                     dataType:'text',
                                     success: function(res) {
                                         console.log('show logged in : ', res);
-                                        // var return_value = "";
-                                        // $('article').append(return_value);
                                     }
                                 });
                             }

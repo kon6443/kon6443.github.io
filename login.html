@@ -73,8 +73,7 @@
                                     data: {id:id,address:address,pw:pw,pwc:pwc},
                                     dataType:'text',
                                     success: function(res) {
-                                        console.log('res: ', res);
-                                        console.log('document.cookie: ', document.cookie);
+                                        window.alert(res);
                                     }
                                 });
                             }
@@ -90,7 +89,6 @@
                                     dataType:'text',
                                     success: function(res) {
                                         location.reload();
-                                        console.log('res: ', res);
                                     }
                                 });
                             }
