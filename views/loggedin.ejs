@@ -25,15 +25,14 @@
 				<ul class="about">
 					<article class="about-text">
                         <div>
-                            <form id="signOut">
-                                <h1>Sign out example</h1>
-                                <button type="button" onclick="signOut()">Log out</button><br><br>
-                            </form>
                             <h1>Welcome <%= user.id %>! <br>
                                 Your address is <%= user.address %>. <br>
-                                You are logged in now. <br>
+                                You are currently logged in. <br>
                                 This is your private page! <br>
                             </h1>
+                            <form id="signOut">
+                                <button type="button" onclick="signOut()">Log out</button><br><br>
+                            </form>
                         </div>
                         <script>
                             function signOut() {

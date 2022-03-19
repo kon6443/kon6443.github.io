@@ -12,10 +12,14 @@ const cookieParser = require('cookie-parser');
 const User = require('./module/user');
 const { auth } = require('./module/authMiddleware');
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 //  To use python script
 var PythonShell = require('python-shell');
 
 const bodyParser = require('body-parser');
+const e = require('express');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -74,47 +78,99 @@ app.post('/login/:signInid/:signInpw', function(req, res, next) {
     User.findOne({id:(user.id)}, function(err, docs) {
         if(err) throw err;
         else if(docs == null) { // Entered ID does not exist.
-            return res.send('Entered ID does not exist.');
+            return console.log('Entered ID does not exist.');
+        } else {  // when entered ID matches.
+            bcrypt.compare(user.pw, docs.pw, function (err, answer) {
+                if (err) throw err;
+                if(answer) {
+                    req.user = docs;
+                    return next();
+                } else {
+                    return res.send('Your password does not match with your ID.');
+                }
+            })
         }
-        else {  // when entered ID matches.
-            if(user.pw===docs.pw) { 
-                const payload = { // put data into json web token
-                    docs,
-                };
-                // generating json web token and sending it
-                jwt.sign(
-                payload, // data into payload
-                process.env.SECRET_KEY, // secret key value
-                { expiresIn: "30m" }, // token expiration time
-                (err, token) => {
-                    if (err) throw err;
-                    else {
-                        return res
-                        .cookie('user', token,{maxAge:30*60 * 1000})
-                        .end();
-                    }
-                });
-            } else return res.send('Your password does not match with your ID.');
+    });
+});
+app.post('/login/:signInid/:signInpw', function(req, res) {
+    const docs = req.user;
+    const payload = { // put data into json web token
+        docs,
+    };
+    // generating json web token and sending it
+    jwt.sign(
+    payload, // data into payload
+    process.env.SECRET_KEY, // secret key value
+    { expiresIn: "30m" }, // token expiration time
+    (err, token) => {
+        if (err) throw err;
+        else {
+            return res
+            .cookie('user', token,{maxAge:30*60 * 1000})
+            .end();
         }
     });
 });
 
+
+// app.post('/login/:signInid/:signInpw', function(req, res) {
+//     let user = new User(req.body);
+//     User.findOne({id:(user.id)}, function(err, docs) {
+//         if(err) throw err;
+//         else if(docs == null) { // Entered ID does not exist.
+//             return res.send('Entered ID does not exist.');
+//         }
+//         else {  // when entered ID matches.
+//             if(user.pw===docs.pw) { 
+//                 const payload = { // put data into json web token
+//                     docs,
+//                 };
+//                 // generating json web token and sending it
+//                 jwt.sign(
+//                 payload, // data into payload
+//                 process.env.SECRET_KEY, // secret key value
+//                 { expiresIn: "30m" }, // token expiration time
+//                 (err, token) => {
+//                     if (err) throw err;
+//                     else {
+//                         return res
+//                         .cookie('user', token,{maxAge:30*60 * 1000})
+//                         .end();
+//                     }
+//                 });
+//             } else return res.send('Your password does not match with your ID.');
+//         }
+//     });
+// });
+
+app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, res, next) {
+    let user = new User(req.body);
+    if(user.pw!==user.pwc) {
+        return res.send('Your password and password confirmation have to be same.');
+    }
+    bcrypt.genSalt(saltRounds, function (err, salt) {
+        if (err) throw err;
+        bcrypt.hash(req.body.pw, salt, function (err, hash) {
+            if (err) throw err;
+            req.hash = hash
+            return next()
+        })
+    })
+});
+
 app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, res) {
     let user = new User(req.body);
+    user.pw = req.hash;
     User.findOne({id:(user.id)}, function(err, docs) {
         if(err) throw err;
         else if(docs == null) { // Entered ID is available.
-            if(user.id&&user.pw&&user.pwc) {
-                if(user.pw!==user.pwc) {// password and password confirmation are not the same.
-                    res.send('Your password and password confirmation have to be same.');
-                } else {    // adding a new account.
-                    user.save();
-                    res.send('You have just created your new account!');
-                }
-            } else res.send('Please enter all the blanks.');
+            if(user.id&&user.pw&&user.pwc) {    // adding a new account.
+                user.save();
+                return res.send('You have just created your new account!');
+            } else return res.send('Please enter all the blanks.');
         }
         else {
-            res.send('Your entered ID already exists.');
+            return res.send('Your entered ID already exists.');
         }
     });    
 });

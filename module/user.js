@@ -11,17 +11,17 @@ const userSchema = mongoose.Schema({  // making a schema called userSchema.
   address: {
     type: String,
     required: true,
-    maxLength: 50,
+    maxLength: 100,
   },
   pw: {
     type: String,
     required: true,
-    maxLength: 50,
+    maxLength: 100,
   },
   pwc: {
     type: String,
     required: true,
-    maxLength: 50,
+    maxLength: 100,
   },
 });
 

@@ -12,7 +12,7 @@ exports.auth = (req, res, next) => {
     }
     // 인증 실패
     catch (error) {
-        // 유효시간이 초과된 경우
+        // Token has been expired
         if (error.name === 'TokenExpiredError') {
             console.log('auth TokenExpiredError');
             next();
@@ -21,7 +21,7 @@ exports.auth = (req, res, next) => {
             //     message: 'Token has been expired.'
             // }); 
         }
-        // 토큰의 비밀키가 일치하지 않는 경우
+        // JsonWebTokenError
         if (error.name === 'JsonWebTokenError') {
             console.log('JsonWebTokenError');
             next();
