@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 
 require('dotenv').config(); // calling enviroment variable from .env file
 
@@ -11,15 +12,13 @@ const cookieParser = require('cookie-parser');
 
 const User = require('./module/user');
 const { auth } = require('./module/authMiddleware');
+const { db } = require('./module/db');
 
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 //  To use python script
 var PythonShell = require('python-shell');
-
-const bodyParser = require('body-parser');
-const e = require('express');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,6 +32,8 @@ app.use(express.static(__dirname + ''));
 app.use(express.json());
 
 app.set('view engine', 'ejs');  
+
+db();
 
 const port = 8080;
 app.listen(port, function() {
@@ -174,21 +175,6 @@ app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, r
         }
     });    
 });
-
-mongoose.connect(
-    process.env.MONGO_URI,
-    {
-      // useNewUrlPaser: true,
-      // useUnifiedTofology: true,
-      // useCreateIndex: true,
-      // useFindAndModify: false,
-    }
-  )
-  .then(() => console.log('MongoDB conected..'))
-  .catch((err) => {
-    console.log(err);
-});
-
 
 app.get('/result', function(req, res) {
     res.sendFile(__dirname + '/result.html');
