@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 require('dotenv').config(); // calling enviroment variable from .env file
 
 // connecting Mongoose
-const mongoose = require('mongoose');
+//const mongoose = require('mongoose');
 // Using jsonwebtoken module.
 const jwt = require("jsonwebtoken");
 const cookieParser = require('cookie-parser');
