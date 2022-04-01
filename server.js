@@ -61,7 +61,7 @@ app.get('/about', function(req, res) {
     res.sendFile(__dirname + '/about.html');
 });
 
-app.get('/login', auth, function(req, res, next) {
+app.get('/login', auth, function(req, res) {
     const user = req.decoded;
     if(user) {
         return res.render('loggedin', {user:user.docs});
@@ -113,68 +113,68 @@ app.post('/login/:signInid/:signInpw', function(req, res) {
     });
 });
 
-
-// app.post('/login/:signInid/:signInpw', function(req, res) {
-//     let user = new User(req.body);
-//     User.findOne({id:(user.id)}, function(err, docs) {
-//         if(err) throw err;
-//         else if(docs == null) { // Entered ID does not exist.
-//             return res.send('Entered ID does not exist.');
-//         }
-//         else {  // when entered ID matches.
-//             if(user.pw===docs.pw) { 
-//                 const payload = { // put data into json web token
-//                     docs,
-//                 };
-//                 // generating json web token and sending it
-//                 jwt.sign(
-//                 payload, // data into payload
-//                 process.env.SECRET_KEY, // secret key value
-//                 { expiresIn: "30m" }, // token expiration time
-//                 (err, token) => {
-//                     if (err) throw err;
-//                     else {
-//                         return res
-//                         .cookie('user', token,{maxAge:30*60 * 1000})
-//                         .end();
-//                     }
-//                 });
-//             } else return res.send('Your password does not match with your ID.');
-//         }
-//     });
-// });
-
 app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, res, next) {
     let user = new User(req.body);
     if(user.pw!==user.pwc) {
         return res.send('Your password and password confirmation have to be same.');
     }
-    bcrypt.genSalt(saltRounds, function (err, salt) {
-        if (err) throw err;
-        bcrypt.hash(req.body.pw, salt, function (err, hash) {
-            if (err) throw err;
-            req.hash = hash
-            return next()
-        })
-    })
-});
-
-app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, res) {
-    let user = new User(req.body);
-    user.pw = req.hash;
     User.findOne({id:(user.id)}, function(err, docs) {
         if(err) throw err;
         else if(docs == null) { // Entered ID is available.
             if(user.id&&user.pw&&user.pwc) {    // adding a new account.
-                user.save();
-                return res.send('You have just created your new account!');
+                return next();
             } else return res.send('Please enter all the blanks.');
         }
         else {
             return res.send('Your entered ID already exists.');
         }
-    });    
+    });
 });
+
+app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, res) {
+    let user = new User(req.body);
+    bcrypt.genSalt(saltRounds, function (err, salt) {
+        if (err) throw err;
+        bcrypt.hash(user.pw, salt, function (err, hash) {
+            if (err) throw err;
+            user.pw = hash;
+            user.save();
+            return res.send('You have just created your new account!');
+        })
+    })
+});
+
+// app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, res, next) {
+//     let user = new User(req.body);
+//     if(user.pw!==user.pwc) {
+//         return res.send('Your password and password confirmation have to be same.');
+//     }
+//     bcrypt.genSalt(saltRounds, function (err, salt) {
+//         if (err) throw err;
+//         bcrypt.hash(req.body.pw, salt, function (err, hash) {
+//             if (err) throw err;
+//             req.hash = hash
+//             return next()
+//         })
+//     })
+// });
+
+// app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, res) {
+//     let user = new User(req.body);
+//     user.pw = req.hash;
+//     User.findOne({id:(user.id)}, function(err, docs) {
+//         if(err) throw err;
+//         else if(docs == null) { // Entered ID is available.
+//             if(user.id&&user.pw&&user.pwc) {    // adding a new account.
+//                 user.save();
+//                 return res.send('You have just created your new account!');
+//             } else return res.send('Please enter all the blanks.');
+//         }
+//         else {
+//             return res.send('Your entered ID already exists.');
+//         }
+//     });    
+// });
 
 app.get('/result', function(req, res) {
     res.sendFile(__dirname + '/result.html');
