@@ -42,7 +42,7 @@
                                 <label for="pwc">PW confirmation:</label>
                                 <input type="text" id="pwc" name="pwc" placeholder="PW confirmation" /><br><br>
                             </div>
-                            <button type="button" onclick="SignupAjax()">Submit</button><br><br>
+                            <button type="button" onclick="SignUpAjax()">Submit</button><br><br>
                         </form>
                         <form id="singin">
                             <h1>Sign in example</h1>
@@ -58,7 +58,7 @@
                         </form>
                         
                         <script>
-                            function SignupAjax() {
+                            function SignUpAjax() {
 								const id = document.getElementById("id").value;
                                 const address = document.getElementById("address").value;
                                 const pw = document.getElementById("pw").value;
@@ -89,18 +89,6 @@
                                     dataType:'text',
                                     success: function(res) {
                                         location.reload();
-                                    }
-                                });
-                            }
-                            function login() {
-                                $.ajax({
-                                    type: "get",
-                                    url: 'http://localhost:8080/login',
-                                    // url: 'http://localhost:8080/login/:signInid/:signInpw',
-                                    data: {},
-                                    dataType:'text',
-                                    success: function(res) {
-                                        
                                     }
                                 });
                             }

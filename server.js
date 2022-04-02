@@ -1,37 +1,47 @@
 const express = require('express');
 const app = express();
+app.use(express.static(__dirname + ''));
+
+// allows you to ejs view engine.
+app.set('view engine', 'ejs');  
+
+// importing body-parser to create bodyParser object
 const bodyParser = require('body-parser');
+// allows you to use req.body var when you use http post method.
+app.use(bodyParser.urlencoded({ extended: true }));
 
-require('dotenv').config(); // calling enviroment variable from .env file
+// importing .env file
+require('dotenv').config();
 
-// connecting Mongoose
-//const mongoose = require('mongoose');
 // Using jsonwebtoken module.
 const jwt = require("jsonwebtoken");
-const cookieParser = require('cookie-parser');
 
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+// importing user schema.
 const User = require('./module/user');
+
+// importing auth function 
 const { auth } = require('./module/authMiddleware');
+
+// importing db function that connects with MongoDB.
 const { db } = require('./module/db');
 
+// importing bcrypt moudle to encrypt user password.
 const bcrypt = require('bcrypt');
+
+// declaring saltRounds to decide cost factor of salt function.
 const saltRounds = 10;
 
 //  To use python script
 var PythonShell = require('python-shell');
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
 // parse application/json
-app.use(bodyParser.json());
-app.use(cookieParser());
-
-app.use(express.static(__dirname + ''));
-
+// app.use(bodyParser.json());
 // allow us to get teh data in request.body;
-app.use(express.json());
+// app.use(express.json());
 
-app.set('view engine', 'ejs');  
 
 db();
 
@@ -93,21 +103,22 @@ app.post('/login/:signInid/:signInpw', function(req, res, next) {
         }
     });
 });
+
 app.post('/login/:signInid/:signInpw', function(req, res) {
     const docs = req.user;
-    const payload = { // put data into json web token
+    const payload = { // putting data into a payload
         docs,
     };
     // generating json web token and sending it
     jwt.sign(
-    payload, // data into payload
+    payload, // payload into jwt.sign method
     process.env.SECRET_KEY, // secret key value
     { expiresIn: "30m" }, // token expiration time
     (err, token) => {
         if (err) throw err;
         else {
             return res
-            .cookie('user', token,{maxAge:30*60 * 1000})
+            .cookie('user', token,{maxAge:30*60 * 1000}) // 1000 is a sec
             .end();
         }
     });

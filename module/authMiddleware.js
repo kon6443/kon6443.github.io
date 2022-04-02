@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const path = require('path');
-// calling enviroment variable from .env file
+// importing .env file
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') }); 
 
 exports.auth = (req, res, next) => {
