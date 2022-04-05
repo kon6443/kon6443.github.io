@@ -6,7 +6,8 @@ def main(arg):
     #sql processing
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT Country FROM Uni_Programs_Requ")
+    # cursor.execute("SELECT Country FROM Uni_Programs_Requ")
+    cursor.execute("SELECT name FROM COUNTRY")
     data = cursor.fetchall()
 
     results = {}

@@ -187,11 +187,11 @@ app.post('/login/:signUpid/:signUpaddress/:signUppw/:signUppwc', function(req, r
 //     });    
 // });
 
-app.get('/result', function(req, res) {
-    res.sendFile(__dirname + '/result.html');
+app.get('/keystroke', function(req, res) {
+    res.sendFile(__dirname + '/keystroke.html');
 });
 
-app.get('/result/country/:country', function(req, res) {
+app.get('/keystroke/:country', function(req, res) {
     //req.query.country
     //req.params.country
     var options = {
