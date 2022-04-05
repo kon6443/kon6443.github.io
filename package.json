@@ -28,6 +28,8 @@
     "passport-local-mongoose": "^6.1.0",
     "python-shell": "^3.0.1",
     "sequelize": "^6.17.0",
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.4.1",
     "sqlite": "^4.0.23",
     "sqlite3": "^4.2.0"
   }

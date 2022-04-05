@@ -2,6 +2,13 @@ const express = require('express');
 const app = express();
 app.use(express.static(__dirname + ''));
 
+// const http = require('http');
+// const server = http.createServer(app);
+// const { Server } = require("socket.io");
+// const io = new Server(server);
+
+const SocketIO = require('socket.io');
+
 // allows you to ejs view engine.
 app.set('view engine', 'ejs');  
 
@@ -37,18 +44,25 @@ const saltRounds = 10;
 //  To use python script
 var PythonShell = require('python-shell');
 
-// parse application/json
-// app.use(bodyParser.json());
-// allow us to get teh data in request.body;
-// app.use(express.json());
-
-
 db();
 
 const port = 8080;
-app.listen(port, function() {
+const server = app.listen(port, function() {
     console.log('Listening on '+port);
 });
+
+
+const io = SocketIO(server, {path: '/socket.io'});
+
+io.on('connection', function (socket) {
+    console.log(socket.id, ' connected...');
+    socket.emit('msg', `${socket.id} has entered the chatroom.`);
+    socket.on('msg', function (data) {
+        console.log(socket.id, data);
+        socket.emit('msg', `Server : "${data}" received.`);
+    });
+});
+
 
 app.get('/', auth, function(req, res) {
     const user = req.decoded;
@@ -69,6 +83,10 @@ app.get('/private', function(req, res) {
 
 app.get('/about', function(req, res) {
     res.sendFile(__dirname + '/about.html');
+});
+
+app.get('/chat', function(req, res) {
+    res.sendFile(__dirname + '/chat.html');
 });
 
 app.get('/login', auth, function(req, res) {
