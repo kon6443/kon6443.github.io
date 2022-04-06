@@ -53,16 +53,45 @@ const server = app.listen(port, function() {
 
 
 const io = SocketIO(server, {path: '/socket.io'});
+var socketList = [];
+
+// io.on('connection', function(socket) {
+//     socketList.push(socket);
+//     io.emit('SEND', `${socket.id} has entered the chatroom.`);
+//     // console.log(socket.id,' has entered the chatroom...');
+//     socket.on('SEND', function(data) {
+//         console.log(socket.id,': ', data);
+//         // socket.broadcast.emit('SEND', `${socket.id}: ${data}`);
+//         console.log(msg);
+//         socketList.forEach(function(item, i) {
+//             console.log(item.id);
+//             if (item != socket) {
+//                 item.emit('SEND', msg);
+//             }
+//         });
+//     });
+//     socket.on('disconnect', function() {
+//         // io.emit('SEND', `${socket.id} has left the chatroom.`);
+//         socketList.splice(socketList.indexOf(socket), 1);
+//     });
+// });
+
+
 
 io.on('connection', function (socket) {
     console.log(socket.id, ' connected...');
-    socket.emit('msg', `${socket.id} has entered the chatroom.`);
+    // socket.emit('msg', `${socket.id} has entered the chatroom.`);
+    io.emit('msg', `${socket.id} has entered the chatroom.`);
     socket.on('msg', function (data) {
-        console.log(socket.id, data);
-        socket.emit('msg', `Server : "${data}" received.`);
+        console.log(socket.id,': ', data);
+        // socket.emit('msg', `Server : "${data}" received.`);
+        socket.broadcast.emit('msg', `${socket.id}: ${data}`);
+    });
+
+    socket.on('disconnect', function (data) {
+        io.emit('msg', `${socket.id} has left the chatroom.`);
     });
 });
-
 
 app.get('/', auth, function(req, res) {
     const user = req.decoded;
