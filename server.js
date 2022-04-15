@@ -76,18 +76,19 @@ var socketList = [];
 //     });
 // });
 
-
-
 io.on('connection', function (socket) {
     console.log(socket.id, ' connected...');
-    // socket.emit('msg', `${socket.id} has entered the chatroom.`);
+    
+    // broadcasting a entering message to everyone who is in the chatroom
     io.emit('msg', `${socket.id} has entered the chatroom.`);
+
     socket.on('msg', function (data) {
         console.log(socket.id,': ', data);
-        // socket.emit('msg', `Server : "${data}" received.`);
+        // broadcasting a message to everyone except for the sender
         socket.broadcast.emit('msg', `${socket.id}: ${data}`);
     });
 
+    // user connection lost
     socket.on('disconnect', function (data) {
         io.emit('msg', `${socket.id} has left the chatroom.`);
     });
