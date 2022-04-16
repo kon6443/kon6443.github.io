@@ -2,11 +2,6 @@ const express = require('express');
 const app = express();
 app.use(express.static(__dirname + ''));
 
-// const http = require('http');
-// const server = http.createServer(app);
-// const { Server } = require("socket.io");
-// const io = new Server(server);
-
 const SocketIO = require('socket.io');
 
 // allows you to ejs view engine.
@@ -82,6 +77,7 @@ io.on('connection', function (socket) {
     // broadcasting a entering message to everyone who is in the chatroom
     io.emit('msg', `${socket.id} has entered the chatroom.`);
 
+    // message receives
     socket.on('msg', function (data) {
         console.log(socket.id,': ', data);
         // broadcasting a message to everyone except for the sender
@@ -91,6 +87,23 @@ io.on('connection', function (socket) {
     // user connection lost
     socket.on('disconnect', function (data) {
         io.emit('msg', `${socket.id} has left the chatroom.`);
+    });
+
+
+
+    // broadcasting a entering message to everyone who is in the chatroom
+    io.emit('msg2', `${socket.id} has entered the chatroom.`);
+
+    // message receives
+    socket.on('msg2', function (data) {
+        console.log(socket.id,': ', data);
+        // broadcasting a message to everyone except for the sender
+        socket.broadcast.emit('msg2', `${socket.id}: ${data}`);
+    });
+
+    // user connection lost
+    socket.on('disconnect', function (data) {
+        io.emit('msg2', `${socket.id} has left the chatroom.`);
     });
 });
 

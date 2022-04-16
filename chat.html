@@ -11,7 +11,6 @@
 		<!-- Bootstrap CSS
 		<body class="body" style="background-color: #1c1c1e; color: rgb(221,221,221); font-family: Sans-serif; margin:0 auto;">
 		 -->
-         <script src="/socket.io/socket.io.js"></script>
 	</head>
 	
 	<body>
@@ -25,14 +24,24 @@
 			<ul class="item-list mySelf">
 				<ul class="about">
 					<article class="about-text">
+                        <!-- importing JS file from socketIO server -->
+                        <script src="/socket.io/socket.io.js"></script>
                         <h1>Message</h1>
                         <!-- chat contents will be written down below. -->
                         <div id="chatContent">
-
+                        
                         </div>
                         <input id="myChat" type="text">
                         <input type="submit" id="send" value="Send">
-                        <!-- <script src="/socket.io/socket.io.js"></script> -->
+
+                        <h1>Message2</h1>
+                        <!-- chat contents will be written down below. -->
+                        <div id="chatContent2">
+                        
+                        </div>
+                        <input id="myChat2" type="text">
+                        <input type="submit" id="send2" value="Send">
+
                         <script>
                             var socket = io.connect('http://localhost:8080', {
                                 path: '/socket.io'
@@ -41,12 +50,14 @@
 
                             // receiving a message
                             socket.on('msg', function (data) {
+                            // socket.on('msg', function (data) {
                                 var msgLine = $('<div class="msgLine">');
                                 var msgBox = $('<div class="msgBox">');
                                 msgBox.append(data);
                                 msgBox.css('display', 'inline-block');
                                 msgLine.append(msgBox);
                                 $('#chatContent').append(msgLine);
+                                // auto scorll down when a user send something
                                 chatContent.scrollTop = chatContent.scrollHeight;
                             });
 
@@ -63,6 +74,39 @@
                                     socket.emit('msg', $(this).val());
                                     $(this).val("");
                                     chatContent.scrollTop = chatContent.scrollHeight;
+                                }
+                            });
+
+
+
+
+
+                            // receiving a message
+                            socket.on('msg2', function (data) {
+                            // socket.on('msg', function (data) {
+                                var msgLine = $('<div class="msgLine">');
+                                var msgBox = $('<div class="msgBox">');
+                                msgBox.append(data);
+                                msgBox.css('display', 'inline-block');
+                                msgLine.append(msgBox);
+                                $('#chatContent2').append(msgLine);
+                                // auto scorll down when a user send something
+                                chatContent2.scrollTop = chatContent2.scrollHeight;
+                            });
+
+                            // sending a message
+                            $("#myChat2").on("keyup", function () {
+                                if (window.event.keyCode==13 && $(this).val()!="") {
+                                    var msgLine = $('<div class="msgLine">');
+                                    var msgBox = $('<div class="msgBox">');
+                                    msgBox.append($(this).val());
+                                    msgBox.css('display', 'inline-block');
+                                    msgLine.css('text-align', 'right');
+                                    msgLine.append(msgBox);
+                                    $('#chatContent2').append(msgLine);
+                                    socket.emit('msg2', $(this).val());
+                                    $(this).val("");
+                                    chatContent2.scrollTop = chatContent2.scrollHeight;
                                 }
                             });
                         </script>
@@ -95,6 +139,39 @@
                                 border-radius: 8px;
                             }
                             #send {
+                                width: 16%;
+                                height: 34px;
+                                border-radius: 50px;
+                                background: black;
+                                color: white;
+                            }
+
+
+                            .msgLine2 {
+                                margin: 15px;
+                            }
+                            .msgBox2 {
+                                border: 1px solid black;
+                                background: black;
+                                padding: 2px 5px;
+                                border-radius: 10px;
+                            }
+                            #chatContent2 {
+                              border: 1px solid #000;
+                              width: 100%;
+                              height: 200px;
+                              margin-bottom: 10px;
+                              overflow-y: auto;
+                            }
+                            #myChat2 {
+                              width: 100%;
+                            }
+                            #msg2, #myChat2 {
+                                width: 80%;
+                                height: 32px;
+                                border-radius: 8px;
+                            }
+                            #send2 {
                                 width: 16%;
                                 height: 34px;
                                 border-radius: 50px;
