@@ -46,64 +46,33 @@ const server = app.listen(port, function() {
     console.log('Listening on '+port);
 });
 
-
 const io = SocketIO(server, {path: '/socket.io'});
 var socketList = [];
-
-// io.on('connection', function(socket) {
-//     socketList.push(socket);
-//     io.emit('SEND', `${socket.id} has entered the chatroom.`);
-//     // console.log(socket.id,' has entered the chatroom...');
-//     socket.on('SEND', function(data) {
-//         console.log(socket.id,': ', data);
-//         // socket.broadcast.emit('SEND', `${socket.id}: ${data}`);
-//         console.log(msg);
-//         socketList.forEach(function(item, i) {
-//             console.log(item.id);
-//             if (item != socket) {
-//                 item.emit('SEND', msg);
-//             }
-//         });
-//     });
-//     socket.on('disconnect', function() {
-//         // io.emit('SEND', `${socket.id} has left the chatroom.`);
-//         socketList.splice(socketList.indexOf(socket), 1);
-//     });
-// });
-
-io.on('connection', function (socket) {
-    console.log(socket.id, ' connected...');
+// var jwtAuth = require('socketio-jwt-auth');
+io
+.use((socket, next) => {
+    cookieParser()(socket.request, socket.request.res || {}, next);
+})
+.on('connection', function (socket) {
+    const req = socket.request;
+    const decoded = jwt.verify(req.cookies.user, process.env.SECRET_KEY);
+    socket.name = decoded.docs.id;
+    console.log(socket.id, ' connected: ', socket.name);
     
     // broadcasting a entering message to everyone who is in the chatroom
-    io.emit('msg', `${socket.id} has entered the chatroom.`);
+    io.emit('msg', `${socket.name} has entered the chatroom.`);
 
     // message receives
     socket.on('msg', function (data) {
-        console.log(socket.id,': ', data);
+        console.log(socket.name,': ', data);
+
         // broadcasting a message to everyone except for the sender
-        socket.broadcast.emit('msg', `${socket.id}: ${data}`);
+        socket.broadcast.emit('msg', `${socket.name}: ${data}`);
     });
 
     // user connection lost
     socket.on('disconnect', function (data) {
-        io.emit('msg', `${socket.id} has left the chatroom.`);
-    });
-
-
-
-    // broadcasting a entering message to everyone who is in the chatroom
-    io.emit('msg2', `${socket.id} has entered the chatroom.`);
-
-    // message receives
-    socket.on('msg2', function (data) {
-        console.log(socket.id,': ', data);
-        // broadcasting a message to everyone except for the sender
-        socket.broadcast.emit('msg2', `${socket.id}: ${data}`);
-    });
-
-    // user connection lost
-    socket.on('disconnect', function (data) {
-        io.emit('msg2', `${socket.id} has left the chatroom.`);
+        io.emit('msg', `${socket.name} has left the chatroom.`);
     });
 });
 
@@ -113,6 +82,16 @@ app.get('/', auth, function(req, res) {
         return res.render('index', {user:user.docs});
     } else {
         return res.sendFile(__dirname + '/home.html');
+    }
+});
+
+app.get('/chat', auth, function(req, res) {
+    const user = req.decoded;
+    if(user) {
+        const header = user.docs.id + "'s message";
+        return res.render('chat', {header:header});
+    } else {
+        return res.sendFile(__dirname + '/chat.html');
     }
 });
 
@@ -126,10 +105,6 @@ app.get('/private', function(req, res) {
 
 app.get('/about', function(req, res) {
     res.sendFile(__dirname + '/about.html');
-});
-
-app.get('/chat', function(req, res) {
-    res.sendFile(__dirname + '/chat.html');
 });
 
 app.get('/login', auth, function(req, res) {

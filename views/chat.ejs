@@ -24,47 +24,28 @@
 			<ul class="item-list mySelf">
 				<ul class="about">
 					<article class="about-text">
-                        
-                        <form id="singin">
-                            <h1>Sign in is required to enter a chatroom</h1>
-                            <div class="field">
-                                <label for="signinID">ID:</label>
-                                <input type="text" id="signinID" name="signinID" placeholder="Enter your fullname" /><br><br>
-                            </div>
-                            <div class="field">
-                                <label for="signinPW">PW:</label>
-                                <input type="text" id="signinPW" name="signinPW" placeholder="Enter your password" /><br><br>
-                            </div>
-                            <button type="button" onclick="signInAjax()">Log in</button><br><br>
-                        </form>
-
-                        
-
+                        <h1 id="header"><%= header %></h1>
+                        <!-- importing JS file from socketIO server -->
                         <script src="/socket.io/socket.io.js"></script>
+                        <!-- chat contents will be written down below. -->
+                        <div id="chatContent">
+                        
+                        </div>
+                        <input id="myChat" type="text">
+                        <input type="submit" id="send" value="Send">
+                        <form id="signOut">
+                            <button type="button" onclick="signOut()">Log out</button><br><br>
+                        </form>
+                        
+                        
                         <script>
-                            function signInAjax() {
-								const signinID = document.getElementById("signinID").value;
-                                const signinPW = document.getElementById("signinPW").value;
-                                document.getElementById("signinID").value = "";
-                                document.getElementById("signinPW").value = "";
-                                $.ajax({
-                                    type: "post",
-                                    url: 'http://localhost:8080/login/:signInid/:signInpw',
-                                    data: {id:signinID,pw:signinPW},
-                                    dataType:'text',
-                                    success: function(res) {
-                                        location.reload();
-                                    }
-                                });
-                            }
-                            // var socket = io.connect('http://localhost:8080', {
-                            //     path: '/socket.io',
-                            //     // transports: ['websocket']
-                            // });
+                            var socket = io.connect('http://localhost:8080', {
+                                path: '/socket.io',
+                                // transports: ['websocket']
+                            });
 
                             // receiving a message
                             socket.on('msg', function (data) {
-                            // socket.on('msg', function (data) {
                                 var msgLine = $('<div class="msgLine">');
                                 var msgBox = $('<div class="msgBox">');
                                 msgBox.append(data);
@@ -90,6 +71,17 @@
                                     chatContent.scrollTop = chatContent.scrollHeight;
                                 }
                             });
+                            function signOut() {
+                                $.ajax({
+                                    type: "get",
+                                    url: 'http://localhost:8080/logOut',
+                                    data: {},
+                                    dataType:'text',
+                                    success: function(res) {
+                                        location.reload();
+                                    }
+                                });
+                            }
                         </script>
                         <style>
                             * {
