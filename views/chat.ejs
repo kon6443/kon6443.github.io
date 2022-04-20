@@ -34,10 +34,8 @@
                         <input id="myChat" type="text">
                         <input type="submit" id="send" value="Send">
                         <form id="signOut">
-                            <button type="button" onclick="signOut()">Log out</button><br><br>
+                            <button type="button" id="logOut" onclick="signOut()">Log out</button><br><br>
                         </form>
-                        
-                        
                         <script>
                             var socket = io.connect('http://localhost:8080', {
                                 path: '/socket.io',
@@ -112,13 +110,20 @@
                                 border-radius: 8px;
                             }
                             #send {
-                                width: 16%;
+                                width: 19%;
                                 height: 34px;
                                 border-radius: 50px;
                                 background: black;
                                 color: white;
                             }
-
+                            #logOut {
+                                margin-top: 2%;
+                                width: 19%;
+                                height: 34px;
+                                border-radius: 50px;
+                                background: black;
+                                color: white;
+                            }
 
                             .msgLine2 {
                                 margin: 15px;

@@ -39,6 +39,7 @@ const saltRounds = 10;
 //  To use python script
 var PythonShell = require('python-shell');
 
+// MongoDB user info DB
 db();
 
 const port = 8080;
@@ -46,9 +47,9 @@ const server = app.listen(port, function() {
     console.log('Listening on '+port);
 });
 
-const io = SocketIO(server, {path: '/socket.io'});
 var socketList = [];
-// var jwtAuth = require('socketio-jwt-auth');
+const io = SocketIO(server, {path: '/socket.io'});
+
 io
 .use((socket, next) => {
     cookieParser()(socket.request, socket.request.res || {}, next);
@@ -65,7 +66,6 @@ io
     // message receives
     socket.on('msg', function (data) {
         console.log(socket.name,': ', data);
-
         // broadcasting a message to everyone except for the sender
         socket.broadcast.emit('msg', `${socket.name}: ${data}`);
     });
@@ -73,13 +73,13 @@ io
     // user connection lost
     socket.on('disconnect', function (data) {
         io.emit('msg', `${socket.name} has left the chatroom.`);
-    });
+    }); 
 });
 
 app.get('/', auth, function(req, res) {
     const user = req.decoded;
     if(user) {
-        return res.render('index', {user:user.docs});
+        return res.render('home', {user:user.docs});
     } else {
         return res.sendFile(__dirname + '/home.html');
     }
@@ -88,7 +88,7 @@ app.get('/', auth, function(req, res) {
 app.get('/chat', auth, function(req, res) {
     const user = req.decoded;
     if(user) {
-        const header = user.docs.id + "'s message";
+        const header = user.docs.id + "'s message"; //ex) five's message
         return res.render('chat', {header:header});
     } else {
         return res.sendFile(__dirname + '/chat.html');
@@ -110,7 +110,7 @@ app.get('/about', function(req, res) {
 app.get('/login', auth, function(req, res) {
     const user = req.decoded;
     if(user) {
-        return res.render('loggedin', {user:user.docs});
+        return res.render('login', {user:user.docs});
     } else {
         return res.sendFile(__dirname + '/login.html');
     }

@@ -4,13 +4,12 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') }); 
 
 exports.auth = (req, res, next) => {
-    // 인증 완료
     try {
-        // 요청 헤더에 저장된 토큰(req.headers.authorization)과 비밀키를 사용하여 토큰을 req.decoded에 반환
+        // verifying jwt using cookies and secret key then return it to req.decoded
         req.decoded = jwt.verify(req.cookies.user, process.env.SECRET_KEY);
         return next();
     }
-    // 인증 실패
+    // autorized failed
     catch (error) {
         // Token has been expired
         if (error.name === 'TokenExpiredError') {
